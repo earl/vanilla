@@ -1,0 +1,10 @@
+<form method=POST action="{vanilla-post-url}">
+snip title:<br>
+<input type="hidden" name="selector" value="store">
+<input name="snip" size="40" value="{.html-name}"><br>
+content:<br>
+<textarea name="snip-content" rows="20" cols="70" wrap="virtual">[snip-content-for-editing]</textarea><br><br>
+<input type="submit" value="Store!">
+</form>
+select parent: 
+{!hierarchy.potential-parents}

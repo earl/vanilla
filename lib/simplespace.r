@@ -1,17 +1,46 @@
 REBOL []
-; 2000-02-15
+
+;;
+;; WARNING - ATTENTION - WARNING
+;;
+;; -- DISCLAIMER BEGIN ---
+;;
+;; this remains only for smoother upgrading of pre 0.5.2-final
+;; vanilla packages. simplespace is outdated and its functionality
+;; is fully provided by chainingspace - use this instead
+;;
+;; to upgrade a space from simple to chaining you need to modify
+;; the space's .conf file to contain the following:
+;;  space-accessor: "chainingspace"
+;;  space-params: reduce [ join vanilla-root "space/" ]
+;;
+;; -- DISCLAIMER END ---
+;;
+
+; 2000-02-15	chl
 ; 2000-04-03	added expansion caps
 ; 2000-11-27	dynasnip implementation is now vanillean-esque
 ; 2000-11-29	dynasnip caching implemented (finally!)
-;		space-full-dir/space-dir splitted/added
+;				space-full-dir/space-dir splitted/added
 ; 2001-02-16	case insensitivity (snips are stored w/ lower-case names)
-; 2001-07-?? 	earl: added dyna-pacakges, fixed a minor dyna-exec bug
+; 2001-07-?? 	earl
+;		* added dyna-pacakges, fixed a minor dyna-exec bug
+; 2001-10-04	chl
+;		* dyna-exec bug (urls as params crashed)
+; 2001-10-08	chl
+;		* dyna caching bugfix
+; 2001-10-19	earl
+;		* store bugfix (empty titles were stored)
+; 2002-04-28	earl
+;		* dyna loader err msg bugfix (displays full package path)
+; 2002-06-09	earl
+;		* escaping modifications
 
 ; required imports: space-param, app-dir
 
 ; --- simplespace-specific functions & variables
 
-simplespace-info: "simple file-based vanillaspace access module 0.2.3 2000-11-29"
+simplespace-info: "simple file-based vanillaspace access module 0.5.1-01 2001-11-21"
 simplespace-location: to-file space-param
 
 ; --- utility functions
@@ -52,7 +81,7 @@ expand: func [data what /local with-that cache-age cache-quiescence dynasnip-nam
 	either what/1 = #"!" [
 		either what/2 = #"(" [
 			parse what [thru "(" copy cache-quiescence to ")"]
-			cache-quiescence: to-time cache-quiescence
+			cache-quiescence: to-time load cache-quiescence
 			dynasnip-name: next find what ")"
 			either (space-exists? rejoin ["cached-" cache-quiescence "-" dynasnip-name]) [
 				cached-at: space-meta-get rejoin ["cached-" cache-quiescence "-" dynasnip-name] "cached-at"
@@ -91,8 +120,9 @@ space-expand: func [data] [
 	forever [
 		parse data x-rule
 		either to-be-xed = none
-			[return data]
-			[data: expand data to-be-xed]
+			[return meta-to-esc data]
+			[data: expand esc-to-meta data to-be-xed]
+		;print to-be-xed
 		to-be-xed: none
 		]
 	]
@@ -104,6 +134,7 @@ space-get: func [name] [
 	]
 
 space-store: func [name data] [
+	if = name "" [ return ]
 	write rejoin [simplespace-location url-encode name ".snip"] data
 	]
 
@@ -111,7 +142,9 @@ space-sys-dir: func [/local files snips] [
 	files: read simplespace-location
 	snips: copy []
 	foreach file files [
-		if = (skip to-string file (length? to-string file) - 5) ".snip" [append snips deplus dehex copy/part to-string file (length? to-string file) - 5]
+		if = (skip to-string file (length? to-string file) - 5) ".snip" [
+			append snips dehex deplus copy/part to-string file (length? to-string file) - 5
+			]
 		]
 	snips
 	]
@@ -138,23 +171,30 @@ space-dyna-dir: func [] [
 	]
 
 space-dyna-exec: func [name /local temp e calling-path dynasnip-name dynasnip-params dyna-object] [
+	;; dyna params splitting
 	temp: parse/all name ":"
 	dynasnip-name: temp/1
-	dynasnip-params: pick temp 2
+	dynasnip-params: either found? find name ":" [ at name (length? temp/1) + 2 ] [ none ]
+
+	;; dyna packages
 	; v2 following (v1: replace/all dynasnip-name "." "/")
-	temp: parse/all dynasnip-name "."				; split(.)
+	temp: parse/all dynasnip-name "."
 	dynasnip-name: last temp
 	reverse temp remove temp reverse temp
 	calling-path: copy ""
 	foreach e temp [ append calling-path join e "/" ]	; rejoin the parts to build the calling-path
 		
 	if error? try [ dyna-object: do load to-file rejoin [app-dir calling-path dynasnip-name ".r"] ] [
-		return rejoin ["__[error loading dynasnip__ from " app-dir dynasnip-name ".r" "]"]
+		return rejoin ["__[error loading dynasnip__ from " app-dir calling-path dynasnip-name ".r" "]"]
 		]
 	;; refine the dyna-object to pass the relative path to the dyna's package
 	;; this allows for greater flexibility in package-naming
 	dyna-object: make dyna-object [ package-path: calling-path ]
-	either error? error: try [hres: dyna-object/handle dynasnip-params] [disarm error return mold error] [hres]
+	either error? error: try [hres: dyna-object/handle dynasnip-params] [
+		disarm error return mold error
+		] [
+		hres
+		]
 	]
 
 space-meta-get-all: func [snipname] [

@@ -1,0 +1,34 @@
+__admin sections__
+
+<li><a href="#space-op">space operation mode</a>
+<li><a href="#users">user management</a>
+<li><a href="#templates">template management</a>
+<li><a href="#attachments">attachment config</a>
+
+<hr /><h4><a name="space-op"></a>set space operation mode</h4>\
+{!admin-do}\
+<form method="POST" action="{vanilla-post-url}">\
+<input type="hidden" name="selector" value="display">\
+<input type="hidden" name="snip" value="vanilla-user-admin-master">\
+<input type="hidden" name="admin-section" value="space-mode">\
+<input type="radio" name="space-mode" value="closed" {!admin-mode-check-if:closed}>__closed__ <small>(only associated users can view and contribute to the space)</small>
+<input type="radio" name="space-mode" value="readonly" {!admin-mode-check-if:readonly}>__read-only__ <small>(everyone can view the space, associates can contribute)</small>
+<input type="radio" name="space-mode" value="open" {!admin-mode-check-if:open}>__open__ <small>(everyone can view the space, registered users can contribute)</small>
+<input type="radio" name="space-mode" value="totallyopen" {!admin-mode-check-if:totallyopen}>__totally open__ <small>(everyone can view and contribute to the space)</small>
+<br /><input type="submit" value="Set Mode">\
+</form>\
+\
+<hr /><h4><a name="users"></a>de/associate users</h4>\
+Associates have certain administrative privileges and are <i>always</i> legitimated to contribute to a space. Associates can associate unassociated registered users as well as unassociate associated colleagues, which provides for a totally necessary level of sociodynamic tension.
+
+{!admin-users:master}\
+
+<hr /><h4><a name="templates"></a>edit templates</h4>\
+<ul>\
+<li><a href="{vanilla-edit-url}vanilla-template">main template</a></li>\
+<li><a href="{vanilla-edit-url}vanilla-edit-form-template">edit form template</a></li>\
+<li><a href="{vanilla-edit-url}du-jour-entry-template">du-jour (weblog) entry template</a></li>\
+</ul>
+
+<hr /><h4><a name="attachments"></a>attachment config</h4>\
+{vanilla-attach-admin}

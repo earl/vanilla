@@ -1,0 +1,41 @@
+
+      synerge vanilla/R - Quick Installation Guide for Un*x-based Systems
+
+ - This installation guide assumes that you have the Apache HTTPD webserver
+   installed.
+ 
+ - Extract the Vanilla unix distribution (vanilla-x.y.z.tar.gz) to a directory
+   of your choice (e.g. /usr/local/vanilla/).
+
+ - Download REBOL/Core from <URL:http://www.rebol.com/platforms.shtml>. You can
+   use the direct link <URL:ftp://ftp.rebol.com/pub/downloads/core/rebol042> if
+   you like.
+
+ - Place rebol042 in a proper directory (e.g. /usr/local/bin/) and make it
+   executable (e.g. chmod +x /usr/local/bin/rebol042).
+
+ - Copy wrapper.cgi and vanilla.r.conf into Apache's cgi-bin directory.
+
+ - Rename wrapper.cgi to vanilla.cgi and vanilla.r.conf to vanilla.cgi.conf.
+
+ - Edit vanilla.cgi with your favorite text-editor and change the first line to
+   point to your REBOL/Core executable (e.g. change it to
+   #!/usr/local/bin/rebol042 -cs)
+
+ - Execute chmod.sh in your vanilla root (e.g. 
+   $ cd /usr/local/vanilla
+   $ ./chmod.sh)
+
+ - You're almost done! Edit vanilla.cgi.conf and adapt at least
+   "vanilla-space-identifier" and "vanilla-root". 
+   
+   - Use some random string as "vanilla-space-identifier", for example the
+     current date and time (e.g. vanilla-space-identifier: "2003-09-22 01:51").
+
+   - "vanilla-root" must point to your Vanilla installation directory (e.g.
+     vanilla-root: "/usr/local/vanilla/") Do not forget the trailing slash!
+     (it must be "/usr/local/vanilla/" but not "/usr/local/vanilla").
+
+ - That's it for now, you should now be able to access your Vanilla instance
+   thru a browser, try <URL:http://localhost/cgi-bin/vanilla.cgi>.
+

@@ -1,7 +1,23 @@
-#!/path/to/rebol(.exe) -cs
+REBOL [
+    Title:		
+		"synerge vanilla/R"
+    Authors:	
+		[ "Christian Langreiter" "Andreas Bolka" ]
+    Version:	
+		0.6.0
+	Date:
+		2003-12-24
 
-; prototypical vanilla rewrite in REBOL
-; 2000-02-11 	0.0.1i	started
+	Rights: {
+		Copyright (C) 2000-2003 Andreas Bolka, Christian Langreiter
+		Licensed under the Academic Free License version 2.0.
+	}
+]
+
+; $Id: vanilla.r,v 1.2 2003/12/24 00:35:48 earl Exp $
+; =============================================================================
+;
+; 2000-02-11 	0.0.1i	started as "prototypical vanilla rewrite in REBOL"
 ; 2000-03-05	0.1.0i	made (moderately) usable
 ; 2000-04-03	0.2.0i	made much more usable (expansion, script-exec, ui)
 ; 2000-04-04	0.2.1	some simple and obvious bugs fixed
@@ -20,117 +36,198 @@
 ; 2000-05-30	0.4.2i	dictionary proto-object usable for sessions and users created
 ; 2000-10-29	0.4.8i	sessions work, user system (login, logout, master, associate, member) works (in principle)	
 ; 2000-11-19	0.4.9i	various bugs related to nuances of newer rebols fixed
-;			wml support removed (should be outsourced to a separate script)
-;			session/user mgmt debugged and interface pushed forward
-; 2000-11-26	-	user interface design
-; 2000-11-27	-	further integration, adoption of vanillean standards (dynasnips, templates)
-; 2000-11-29	-	general cleanup, dynasnip caching, fast-backlinks-on-store
+;						wml support removed (should be outsourced to a separate script)
+;						session/user mgmt debugged and interface pushed forward
+; 2000-11-26	-		user interface design
+; 2000-11-27	-		further integration, adoption of vanillean standards (dynasnips, templates)
+; 2000-11-29	-		general cleanup, dynasnip caching, fast-backlinks-on-store
 ; 2001-02-13	0.5a1	implemented permission system
-; 2001-02-27	-	fixed trivial but annoying bug in session code (case: user valid, session not)
+; 2001-02-27	-		fixed trivial but annoying bug in session code (case: user valid, session not)
 ; 2001-03-01	0.5pa1	lots of little buglets fixed, first public alpha
-; 2001-03-05	-	added redirect-to to user-login
-; 2001-05-25		reactivated display-text and display-raw
+; 2001-03-05	-		added redirect-to to user-login
+; 2001-05-25	-		reactivated display-text and display-raw
 ;
-; 2001-05-25   		earl: added originator attribut, incorporated /space/ changes
-; 2001-05-28   		chl: new linking
-; 2001-07-12		earl: changed 'display*' for enhanced security possibilities
-; 2001-07-17		earl: store redirects to display-url
-; 2001-07-17		chl: introduced lib
-; 2001-08-25		chl: added really fast backlinks (finally!)
-; 2001-08-30		0.5 release (!!!), redirect-to exceptions
+; 2001-05-25   			earl: added originator attribute, incorporated /space/ changes
+; 2001-05-28   			chl: new linking
+; 2001-07-12			earl: changed 'display*' for enhanced security possibilities
+; 2001-07-17			earl: store redirects to display-url
+; 2001-07-17			chl: introduced lib
+; 2001-08-25			chl: added really fast backlinks (finally!)
+; 2001-08-30	0.5 	release (!!!), redirect-to exceptions
+; 2001-10-??			earl: some minor bugfixes
+; 2001-11-??			earl: POST rewrite
+; 2001-11-22			chl: link up bugfix
+; 2001-11-25			earl: edit + HTML bugfix
+; 2001-12-03			earl: basic cookie bugfixing, should advance to Max-Age use
+; 2001-12-07			earl: sysdata-recent-stores
+; 2001-??-??	0.5.1	release
+; 2002-03-31			earl: some url-enc bugfixes, incorporating some chl bugfixes
+; 2002-04-05			earl: html-link-me-up is case sensitive (chl bugxi)
+; 2002-04-19			earl: snip naming cleanup
+; 2002-05-11			earl: major core rewrite: auth/user/session, main
+; 2002-05-12			earl: further refactoring
+; 2002-05-21			earl: added display-asis
+; 2002-06-09			earl: backlink heuristics, various minor mods
+; 2002-07-13			earl: 
+;						- base-url usage with http-redir unified
+;						- flexible-link-up bugs fixed (links containing // could not use post-colon)
+;						- nifty cgi params parsing bug fixed (nams/vals was provided by get AND post)
+;						- a multitude of small style-cleanups and typo's fixed
+; 2002-07-28			earl: 
+;						- internal-links-in? bug fixed (pre-colon related)
+;						- added __config-loaded flag
+; 2002-10-08			earl: fixed delete snip functionality
+; 2003-04-02			earl: display selector: improved template handling, removed redundancies
+; 2003-04-03			earl: small param parsing fixes, post-data is preserved in global __post-data
+; 2003-04-04			earl: heuristics bug fixed
+; 2003-07-08			earl:
+;						- copyright changed to 2003 (info selector)
+;						- incorporated chris' configurable start snip (vanilla-start-snip) modification
+; 2003-07-14			earl: resource-url internal snip added (-> {resource-url})
+; 2003-07-21			earl: all set-cookie calls w/o expire-date now use "" instead of " " [thx rist]
+; 2003-07-27			earl: fixed a 'parse related heuristics bug. added string-tools lib
+; 2003-08-24			earl: case insensitivity bug in delete selector
+; 2003-09-01			earl: fixed some start-snip bugs
+; 2003-09-02			earl:
+;						- cookie-prefix stuff
+;							- removed set-cookie-then-redirect (never used)
+;							- added vanilla-cookie-prefix config param
+;							- added /unprefixed refinement to get/set-cookie
+;						- almost all legacy code-layout cleaned
+;						- url generation configuration handling improved
+; 2003-09-03			earl: version numbers updated to 0.5.4
+; 2003-09-14			earl: slight improvement of http-redir
+; 2003-09-16			earl: bugfix in flexible-link-up 
+; 2003-09-22			earl: minor release cleanups
+; 2003-12-24			earl: 
+;						- removed vanilla-html-link-prefix
+;						- prepared for release as 0.6.0
+;
+; =============================================================================
 
-REBOL [
-    Title:  "synerge vanilla/R"
-    Authors: ["Christian Langreiter" "Andreas Bolka"]
-    Version: 0.5
-]
+
+if all [ not error? try [ __config-loaded ] (value? 'benchmark) benchmark ] [ __t0: now/time/precise ]
 
 ; print "Content-type: text/html^/^/"
 ; trace true
 ; print system/options/cgi/content-length
 
-; cgi-param fetching is now on the top i.o. to prevent too easy exploits (variable overwriting)
 
-; GET
-params: decode-cgi any [system/options/cgi/query-string ""]
+; --- cgi stuff ---
 
+; cgi-param fetching is now on the top i.o. to prevent too easy 
+; exploits (variable overwriting)
+
+params: copy []
+; get
+append params decode-cgi any [ system/options/cgi/query-string "" ]
+; post
 if system/options/cgi/request-method = "POST" [
-      tmp: load any [system/options/cgi/content-length "0"]
-      either tmp > 0 [
-	        buffer: make string! (tmp + 10)
-        	while [tmp > 0] [tmp: tmp - read-io system/ports/input buffer tmp]
-        	append params decode-cgi buffer
-      		] [
-		return none
-		]
-	]      
+	len: load any [ system/options/cgi/content-length "0" ]
+	__post-data: make string! ( len + 10 )
+	while [ 0 < read-io system/ports/input __post-data len ] []
+	if tmp: attempt [ decode-cgi __post-data ] 
+		[ append params tmp ]
+	; append params decode-multipart-form-data/fallback __post-data
+]      
 
-; utility functions
+; --- utility functions ---
 
-http-redir: func [url] [
+http-redir: func [ url ] [
 	; print htmlheader
 	; print "I should go. Go yourself!"
-	print join "Location: " url
-	print join "Expires: 0" newline
+    print rejoin [
+        "Status: 302 Moved temporarily" newline
+        "Location: " url newline
+    ]
 	quit
-	]
+]
 
 get-cookies-raw: func [] [
-	foreach [key value] system/options/cgi/other-headers [if = key "HTTP_COOKIE" [return value]]
-	return none
-	]
+	select system/options/cgi/other-headers "HTTP_COOKIE"
+]
 
-get-cookie: func [name] [
-	all-cookies: parse to-string get-cookies-raw "; ="
-	foreach [key value] all-cookies [if = key name [return value]]
-	return none
-	]
+get-cookie: func [ name /unprefixed ] [
+	; if called w/o /unprefixed refinement then prefix!
+	if none? unprefixed [ insert name vanilla-cookie-prefix ]
 
-set-cookie: func [key value path expires] [
+	if none? get-cookies-raw [ return none ]
+	select (parse get-cookies-raw "; =") name
+]
+
+set-cookie: func [ key value path expires /unprefixed ] [
+	; if called w/o /unprefixed refinement then prefix!
+	if none? unprefixed [ insert key vanilla-cookie-prefix ]
+
 	print rejoin ["Set-Cookie: " key "=" value "; " "path=" path "; expires=" expires]
-	]
+]
 
-set-cookie-then-redirect: func [key value path expires url] [
-	set-cookie key value path expires
-	http-redir url
-	]
+textheader:	"Content-Type: text/plain^/"
+htmlheader:	"Content-Type: text/html^/"
 
-textheader: 	"Content-Type: text/plain^/"
-htmlheader: 	"Content-Type: text/html^/"
-jsheader: 	"Content-type: script/javascript^/"
+; --- internal vanilla startup (config, libs/plugins) ---
 
-; print htmlheader
+set-default: func [ 
+    {Sets a word to the specified default-value iff the word
+    is not set already.}
+    word
+    default-value
+] [ 
+    if unset? get/any word [ set word default-value ] 
+]
 
 sys-script-name: system/options/script
-script-name: pick parse sys-script-name "/" length? parse sys-script-name "/"
+script-name: last parse sys-script-name "/"
 
-; --- some things which might be in the .conf (or not) ---
+; load config
+if error? try [ __config-loaded ] [ 
+	do load to-file join script-name ".conf" 
+]
 
-vanilla-html-link-prefix: "" ; might be reset in the .conf
-
-do load to-file join script-name ".conf"
-
-do load to-file rejoin [lib-dir space-accessor ".r"]
-do load to-file rejoin [lib-dir userdb-accessor ".r"]
-do load to-file rejoin [lib-dir sessiondb-accessor ".r"]
-
+; load internal libs
 do load to-file join lib-dir "secure-hash.r"
+do load to-file join lib-dir "simplemeta.r"
 
-vanilla-edit-url: rejoin [ script-name "?selector=edit&snip="]
-vanilla-display-url: rejoin [ "/cgi-bin/" script-name "?selector=display&snip="] ; rejoin [ "/space/" ]
-vanilla-new-url: rejoin [script-name "?selector=new&snip="]
-vanilla-store-url: rejoin [script-name "?selector=store&snip="]
+; load pluggable libs
+do load to-file rejoin [ lib-dir space-accessor ".r" ]
+do load to-file rejoin [ lib-dir userdb-accessor ".r" ]
+do load to-file rejoin [ lib-dir sessiondb-accessor ".r" ]
 
-; internal snips are found first by the space-expand function
-; ".xxx" snips are metadata attributes of a snip (like .name, .author, .date-last-edit etc.)
+; set default config vals
+set-default	'vanilla-cookie-prefix	copy ""
+set-default	'vanilla-start-snip		copy "start"
 
-internal-snips: [
-	"script-version"	0.5.0.1
-	"script-name"		script-name
-	"now"			now
-	"space-id"		vanilla-space-identifier
-	"resource-dir"		resource-dir
-	]
+set-default 'vanilla-base-url		copy ""
+
+set-default 'vanilla-get-url		rejoin [ vanilla-base-url script-name ]
+set-default 'vanilla-post-url		rejoin [ vanilla-base-url script-name ]
+
+set-default 'vanilla-display-url	rejoin [ vanilla-get-url "?selector=display&snip="	]
+set-default 'vanilla-edit-url		rejoin [ vanilla-get-url "?selector=edit&snip="		]
+set-default 'vanilla-new-url		rejoin [ vanilla-get-url "?selector=new&snip="		]
+set-default 'vanilla-store-url		rejoin [ vanilla-get-url "?selector=store&snip="	]
+
+; internal snips are found first by the space-expand function (access them directly by eg {now})
+; ".xxx" snips are metadata attributes of a snip (like .name, .author, etc.)
+
+internal-snips: reduce [
+	"script-version"		0.5.4
+	"script-name"			script-name
+	"now"					now
+	"space-id"				vanilla-space-identifier
+	"resource-dir"			resource-dir
+	"resource-url"			resource-url
+
+	"vanilla-base-url"		vanilla-base-url
+
+	"vanilla-get-url" 		vanilla-get-url
+	"vanilla-post-url" 		vanilla-post-url
+
+	"vanilla-display-url" 	vanilla-display-url
+	"vanilla-edit-url" 		vanilla-edit-url
+	"vanilla-store-url" 	vanilla-store-url
+	"vanilla-new-url" 		vanilla-new-url
+]
 
 ; --- vanilla misc vars / funcs ---
 
@@ -138,7 +235,7 @@ to-vanilla-date: func [date [date!] /local vdm vdd] [
 	either (length? to-string date/month) = 1 [vdm: rejoin ["0" date/month]] [vdm: date/month]
 	either (length? to-string date/day) = 1 [vdd: rejoin ["0" date/day]] [vdd: date/day]
 	return rejoin [date/year "-" vdm "-" vdd]
-	]
+]
 
 vanilla-date: to-vanilla-date now
 vanilla-link-rules: []
@@ -148,83 +245,78 @@ vanilla-link-rules: []
 html-format-paragraphs: func [snip] [
 	replace/all snip "^/^/" "<p>"
 	snip
-	]
+]
 
 html-format-breaks: func [snip] [
 	replace/all snip "^/" "<br>"
 	snip
-	]
+]
 
-html-format-links: func [snip] [
+html-format-links: func [snip /local link-rule link] [
 	;vanilla-link-rules: to-block space-expand space-get "vanilla-links"
 	link-rule: [thru "*" copy link to "*"]
-	link: none
 	forever [
+		link: none
 		parse snip link-rule
 		either link = none
 			[return snip]
 			[snip: html-link-me-up snip link]
-		link: none
-		]
 	]
+]
 
-
-is-internal-link?: func [link] [
+is-internal-link?: func [link /local rules found ] [
+	if none? link [ return false ]
 	; attention: has to be in sync with flexible-link-up
-	rules: vanilla-link-rules
 	rules: to-block space-expand space-get "vanilla-links"
 	pre-colon: none
-	noslashes: [copy pre-colon to ":" thru ":" copy post-colon to end]
-	slashes: [copy pre-colon to ":" thru "//" copy post-slashes to end]
-	parse link [slashes | noslashes]
+	parse link [ copy pre-colon to ":" to end ]
 	found: find rules pre-colon
 	; hmmm, have to think about pre-snip-existence-creation of metadata/fast-backlinks ...
 	; either (= found none) [either space-exists? link [return true] [return false]] [return false]
-	either (= found none) [return true] [return false]
-	]
+	either found? find rules pre-colon [ return false ] [ return true ]
+]
 
-flexible-link-up: func [str /local pre-colon post-colon post-slashes slashes noslashes rules rule full found] [
-	full: str
-	rules: to-block space-expand space-get "vanilla-links"
-	;rules: vanilla-link-rules
-	noslashes: [copy pre-colon to ":" thru ":" copy post-colon to end]
-	slashes: [copy pre-colon to ":" thru "//" copy post-slashes to end]
-	parse str [slashes | noslashes]
-	found: find rules pre-colon
-	either (= found none) [
-		either space-exists? str [
-			return rejoin ["<a href=" vanilla-display-url url-encode str ">" str </a>]
-			] [
-			return rejoin ["[create <a href=" vanilla-html-link-prefix script-name "?selector=new&snip=" url-encode str ">" str </a> "]"]
-			]	
-		] [
-		rule: copy first next found
-		replace/all rule 'full full
-		replace/all rule 'pre-colon pre-colon
-		replace/all rule 'post-colon post-colon
-		if (string? post-colon) [replace/all rule 'url-encoded-post-colon url-encode post-colon]
-		replace/all rule 'post-slashes post-slashes
-		return rejoin rule
-		]
-	]
+flexible-link-up: func [str /local html-str full pre-colon post-colon post-slashes rules rule found ] [
+    rules: to-block space-expand space-get "vanilla-links"
+
+    parse str [ copy pre-colon to ":" thru ":" copy post-colon to end ]
+    if post-colon [ parse post-colon [ thru "//" copy post-slashes to end ] ]
+
+    found: find rules pre-colon
+    either none? found [
+        ; @@ html-encode
+        html-str: replace/all copy str "&" "&amp;"
+        either space-exists? str
+            [ return rejoin [ {<a href="} vanilla-display-url url-encode str {">} html-str {</a>} ] ]
+            [ return rejoin [ {[create <a href="} vanilla-new-url url-encode str {">} html-str {</a>]} ] ]
+    ] [
+        rule: copy first next found
+        replace/all rule 'full str
+        replace/all rule 'pre-colon any [ pre-colon "" ]
+        replace/all rule 'post-colon any [ post-colon "" ]
+        replace/all rule 'post-slashes any [ post-slashes "" ]
+        replace/all rule 'url-encoded-post-colon url-encode any [ post-colon "" ]
+
+        return rejoin rule
+    ]
+]
 
 html-link-me-up: func [snip link] [
-	replace/all snip rejoin ["*" link "*"] flexible-link-up link
+	replace/all snip "%2F" "/"
+	replace/all/case snip rejoin ["*" link "*"] flexible-link-up link
 	return snip
-	]
-
+]
 
 html-format-bold: func [snip] [
 	span-rule: [thru "__" copy span to "__"]
-	span: none
 	forever [
+		span: none
 		parse snip span-rule
 		either span = none
 			[return snip]
 			[replace snip rejoin ["__" span "__"] rejoin ["<b>" span "</b>"]]
-		span: none
-		]
 	]
+]
 
 html-fixup-umlauts: func [snip] [
 	replace/case/all snip "ä" "&auml;"
@@ -234,55 +326,75 @@ html-fixup-umlauts: func [snip] [
 	replace/case/all snip "Ö" "&Ouml;"
 	replace/case/all snip "Ü" "&Uuml;"
 	return snip
-	]
+]
 
-html-escape-stars: func [snip] [
-	replace/all snip "\*" "&#042;"
-	]
+html-escape-newlines: func [snip] [
+	snip: replace/all snip (esc-to-meta join "\" newline) ""
+	snip: replace/all snip (esc-to-meta join "\" crlf) ""
+	snip: replace/all snip (esc-to-meta join "\" cr) ""
+	snip
+]
 
 html-format: func [snip] [
-	snip: html-format-paragraphs snip
+	snip: esc-to-meta snip
+	snip: html-escape-newlines snip
+
 	snip: html-format-breaks snip
-	snip: html-escape-stars snip
 	snip: html-format-links snip
 	snip: html-format-bold snip
 	snip: html-fixup-umlauts snip
+
+	snip: meta-to-esc snip
 	snip
-	]
+]
 
 ; --- pre-cached backlink generation functions ---
 ; --- super-fast edition, chl 2001-05-25 ---
 
 internal-links-in: func [snip-data /local links e r] [
 	links: copy [] r: copy []
-	snip-data: html-escape-stars snip-data
-	parse snip-data [any [thru "*" copy text to "*" skip (append links text)]]
-	foreach e links [
-		if is-internal-link? e [append r e]
-		]
+	snip-data: esc-to-meta snip-data
+	parse snip-data [ any [ thru "*" copy text to "*" skip (append links text) ] ]
+	foreach e links 
+		[ if is-internal-link? e [append r e] ]
+
 	r
+]
+
+snip-content-heuristically-ok?: func [ snip /local sdata ct tmp ] [
+	odd? length? split (esc-to-meta space-get snip) "*"
+]
+
+link-heuristically-ok?: func [ sniplink ] [
+	all [ 
+		((length? sniplink) < 40)
 	]
+]
 
 modify-backlinks: func [for-snip snip-name f /local old-backlinks] [
-	old-backlinks: space-meta-get for-snip "fast-backlinks"
-	if none? old-backlinks [old-backlinks: copy []]
-	space-meta-set for-snip "fast-backlinks" f old-backlinks to-block mold snip-name
-	; print htmlheader probe space-meta-get for-snip "fast-backlinks"
-	]
-
-purge-backlinks-for: func [snip-name /local snip-data backlinking-snip] [
-	snip-data: space-get snip-name
-	foreach backlinking-snip (internal-links-in snip-data) [
-		modify-backlinks backlinking-snip snip-name :exclude
+	old-backlinks: copy any [ (space-meta-get for-snip "fast-backlinks") [] ]
+	if any [
+		(space-exists? for-snip)
+		all [
+			(snip-content-heuristically-ok? snip-name)
+			(link-heuristically-ok? snip-name)
+			(link-heuristically-ok? for-snip)
+			(not found? find snip-name "*")
 		]
+	] [ 
+		space-meta-set for-snip "fast-backlinks" f old-backlinks to-block mold snip-name 
 	]
+]
 
-create-backlinks-for: func [snip-name /local snip-data snip-to-backlink] [
-	snip-data: space-get snip-name
-	foreach snip-to-backlink (internal-links-in snip-data) [
-		modify-backlinks snip-to-backlink snip-name :union
-		]
-	]
+purge-backlinks-for: func [snip-name /local backlinking-snip] [
+	foreach backlinking-snip (internal-links-in space-get snip-name) 
+		[ modify-backlinks backlinking-snip snip-name :exclude ]
+]
+
+create-backlinks-for: func [snip-name /local snip-to-backlink] [
+	foreach snip-to-backlink (internal-links-in space-get snip-name) 
+		[ modify-backlinks snip-to-backlink snip-name :union ]
+]
 
 ; --- handler functions ---
 
@@ -290,16 +402,31 @@ new: func [snipname] [
 	edit snipname
 	]
 
-edit: func [snipname /local snip edit-form] [
-	insert internal-snips snipname
-	insert internal-snips ".name"
-	print htmlheader
-	edit-form: replace (space-expand space-get "vanilla-edit-form-template") "[snip-content-for-editing]" space-get snipname
-	print replace (space-expand space-get "vanilla-template") "[snip-content]" edit-form 
-	]
+edit: func [snipname /local htmlname snip edit-ct edit-form] [
+	repend internal-snips [ ".name" snipname ]
+	repend internal-snips [ ".url-name" (url-encode snipname) ]
 
-store-raw: func [snipname snipdata /local recent-edits resolved-remote snip-at-hand uid] [
-	replace/all snipdata "^M^/" "^/"
+	; @@ html-encode
+	htmlname: copy snipname
+	replace/all htmlname "&" "&amp;"
+	replace/all htmlname "^"" "&quot;"
+	replace/all htmlname "^'" "&#39;"
+	repend internal-snips [ ".html-name" htmlname ]
+
+	print htmlheader
+	edit-ct: space-get snipname
+	replace/all edit-ct "&" "&amp;"
+	replace/all edit-ct "<" "&lt;"
+	replace/all edit-ct ">" "&gt;"
+	edit-form: replace 
+	  	(space-expand space-get "vanilla-edit-form-template") 
+	  	"[snip-content-for-editing]" 
+	  	rejoin [ newline edit-ct ]
+	print replace (space-expand space-get "vanilla-template") "[snip-content]" edit-form 
+]
+
+store-raw: func [snipname snipdata /local resolved-remote snip-at-hand uid] [
+	replace/all snipdata crlf newline
 	space-store snipname snipdata
 
 	resolved-remote: read to-url rejoin ["dns://" system/options/cgi/remote-addr]
@@ -311,25 +438,55 @@ store-raw: func [snipname snipdata /local recent-edits resolved-remote snip-at-h
 	; last-editor
 	space-meta-set snipname "last-editor-id" uid
 	; originator 
-	if = none (space-meta-get snipname "originator-id") [
-		space-meta-set snipname "originator-id" uid
-		]
+	if none? (space-meta-get snipname "originator-id") 
+		[ space-meta-set snipname "originator-id" uid ]
 
-	if ((space-meta-get snipname "displays") = none) [
-		space-meta-set snipname "displays" 0
-		] 
+	if none? (space-meta-get snipname "displays")
+		[ space-meta-set snipname "displays" 0 ] 
+]
+
+update-recent-stores: func [ snipname ] [
+	odb: "sysdata-recent-stores"
+	roll-limit: 100
 	
-	]
+	if not space-exists? odb [ space-store odb mold [] ]
+
+	l: load space-get odb
+	insert l snipname ; reduce [ snipname (space-meta-get-all snipname) ]
+	l: unique/case l
+	l: copy/part l roll-limit ; (roll-limit * 2)
+	space-store odb mold l
+]
 
 store: func [snipname snipdata] [
+	if = snipname "" [ http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-store-error" ] ]
 	purge-backlinks-for snipname
 	store-raw snipname snipdata
 	create-backlinks-for snipname
-	;display snipname
-	http-redir rejoin [ vanilla-base-url vanilla-display-url snipname ]
-	]
 
-display-common-procedure: func [snipname] [
+	update-recent-stores snipname
+
+	;display snipname
+	http-redir rejoin [ vanilla-base-url vanilla-display-url url-encode snipname ]
+]
+
+delete-snip: func [ snipname ] [
+	purge-backlinks-for snipname
+	either space-delete snipname [
+		if space-exists? "sysdata-recent-stores" [
+			odb: load space-get "sysdata-recent-stores"
+			odb: exclude/case odb reduce [ snipname ]
+			space-store "sysdata-recent-stores" mold odb
+		]
+
+		http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-delete-ok&snip-ex=" snipname ]
+	] [
+		http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-delete-error&snip-ex=" snipname ] 
+	]
+]
+
+
+display-common-procedure: func [snipname /local metadata] [
 	; displays++
 	; .name into internal-snips
 	; metadata into internal-snips
@@ -338,86 +495,106 @@ display-common-procedure: func [snipname] [
 	if (space-meta-get snipname "displays") = none [space-meta-set snipname "displays" 0]
 	space-meta-set snipname "displays" ((space-meta-get snipname "displays") + 1)
 
-	insert internal-snips snipname
-	insert internal-snips ".name"
+	repend internal-snips [ ".name" snipname ]
+	repend internal-snips [ ".url-name" (url-encode snipname) ]
+	; @@ html-encode
+	htmlname: copy snipname
+	replace/all htmlname "&" "&amp;"
+	replace/all htmlname "^"" "&quot;"
+	replace/all htmlname "^'" "&#39;"
+	repend internal-snips [ ".html-name" htmlname ]
 
 	metadata: space-meta-get-all snipname
-	forskip metadata 2 [one: metadata/1 remove metadata insert metadata rejoin ["." one]]
-	metadata: head metadata
+	forskip metadata 2 
+		[ repend internal-snips [ (join "." metadata/1) metadata/2 ] ]
+]
 
-	insert internal-snips metadata
-	]
-
-
-display: func [snipname /local snip] [
+display: func [snipname /local html-snip] [
 	display-common-procedure snipname
-	html-snip: space-expand replace space-get "vanilla-template" "[snip-content]" html-format space-expand space-get snipname
+	html-snip:
+		meta-to-html 
+			replace 
+				esc-to-meta space-expand esc-to-meta space-get "vanilla-template" 
+				"[snip-content]" 
+				esc-to-meta html-format space-expand esc-to-meta space-get snipname
 	print htmlheader
 	print html-snip
-	]
+]
 
-display-text: func [snipname /local snip] [
+display-text: func [snipname /local html-snip] [
 	display-common-procedure snipname
-	html-snip: html-format space-expand space-get snipname
+	html-snip: esc-to-html html-format space-expand esc-to-meta space-get snipname
 	print htmlheader
 	print html-snip
-	]
+]
 
-display-raw: func [snipname /local snip] [
+display-raw: func [snipname /local raw-snip] [
 	display-common-procedure snipname
 	raw-snip: space-get snipname
 	print htmlheader
 	print raw-snip
-	]
+]
 
-eval-p: func [mode class request-class snip] [
-	always-visible-snips: ["vanilla-user-register" "vanilla-user-register-do" "vanilla-user-login" "vanilla-user-logged-out" "vanilla-user-login-failure"]
+display-asis: func [snipname] [
+	display-common-procedure snipname
+	print space-expand space-get snipname
+]
+
+eval-p: func [mode class request-class snip /local always-visible-snips] [
+	always-visible-snips: [
+		"vanilla-user-register" "vanilla-user-register-do" 
+		"vanilla-user-login" "vanilla-user-logged-out" "vanilla-user-login-failure"
+	]
 	if = class 'edit [always-visible-snips: []]
 	return ((= vanilla-space-mode mode) and (= class request-class) and (= none find always-visible-snips snip))
-	]
+]
 
 permissions-ok?: func [class snip /local always-visible-snips] [
 	if all [ (not = user none) (= "true" to-string (user/get 'disabled)) ]
 		[display "vanilla-user-disabled" quit]
 	if (eval-p "closed" 'display class snip) and (= user none) 
-		[display "vanilla-please-login" quit]
+		[display "vanilla-user-please-login" quit]
 	if (eval-p "closed" 'edit class snip) and (= user none) 
-		[display "vanilla-please-login" quit]
+		[display "vanilla-user-please-login" quit]
 	if (eval-p "closed" 'display class snip) and (not users-is-associate? user) 
-		[display "vanilla-wait-for-association" quit]
+		[display "vanilla-user-wait-for-association" quit]
 	if (eval-p "closed" 'edit class snip) and (not users-is-associate? user) 
-		[display "vanilla-wait-for-association" quit]
+		[display "vanilla-user-wait-for-association" quit]
 	if (eval-p "readonly" 'edit class snip) and (= user none) 
-		[display "vanilla-please-login" quit]
+		[display "vanilla-user-please-login" quit]
 	if (eval-p "readonly" 'edit class snip) and (not users-is-associate? user) 
-		[either (not = user/get 'id space-meta-get snip "originator-id") [
-		 	display "vanilla-editing-disallowed" quit
-			] [
-			]
-		]
+		[ either (not = user/get 'id space-meta-get snip "originator-id") 
+			[ display "vanilla-user-editing-disallowed" quit ] 
+			[ ] ]
 	if (eval-p "open" 'edit class snip) and (= user none) 
-		[display "vanilla-please-login" quit]
-	]
+		[display "vanilla-user-please-login" quit]
+]
 
 handle: func [params] [
 
+	; bind supplied url-params to global rebol words
 	do params
 
 	; if you want to limit vanilla functionality, remove the selector below
-	valid-selectors: ["user-login" "user-logout" "end-session" "display" "display-text" "display-raw" "info" "edit" "new" "store"]
+	valid-selectors: [ 
+		"user-login" "user-logout" "end-session" 
+		"display" "display-text" "display-raw" "display-asis" 
+		"info" "edit" "new" "store" "delete"
+	]
 
 	either (find valid-selectors selector) = none
-		[snip: "vanilla-no-such-selector" display snip]
-		[switch selector [
+		[ snip: "vanilla-no-such-selector" display snip ]
+		[ switch selector [
 			"display" [
-				if error? try [snip] [snip: "start"]
+				snip: any [ attempt [ snip ] vanilla-start-snip ]
 				permissions-ok? 'display snip
 				display snip
 				]
 			"info" [ 
 				print textheader
-				print "synerge vanilla/r (c) christian langreiter 2000-2001"
-				print probe system/options
+				print "synerge vanilla/r"
+				print "Copyright (C) 2000-2003 by Andreas Bolka, Christian Langreiter"
+				print mold system/options/cgi
 				]
 			"display-text" [
 				permissions-ok? 'display snip
@@ -427,9 +604,9 @@ handle: func [params] [
 				permissions-ok? 'display snip
 				display-raw snip
 				]
-			"display-js" [
+			"display-asis" [
 				permissions-ok? 'display snip
-				display-js snip
+				display-asis snip
 				]
 			"edit" [
 				permissions-ok? 'edit snip
@@ -443,134 +620,161 @@ handle: func [params] [
 				permissions-ok? 'edit snip
 				store snip snip-content
 				]
+			"delete" [
+				permissions-ok? 'edit snip
+				delete-snip snip
+				]
 			"end-session" [
 				if (sessions-valid? vanilla-session-id) [
 					sessions-delete vanilla-session-id
 					; print "Content-type: text/html^/^/deleted"
-					http-redir rejoin [vanilla-html-link-prefix script-name "?selector=display&snip=start"]
+					http-redir rejoin [ vanilla-base-url vanilla-display-url vanilla-start-snip ]
 					quit
-					]
 				]
+				] ; end-session
 			"user-login" [
-				; print htmlheader
-				either (users-valid-name-and-passphrase? user-name passphrase) [
-					if (not = (to-string (session/get 'associated-user-id)) "none") [
-						sessions-delete vanilla-session-id
-						set-cookie "vanilla-user-id" "-1/invalidated" "/" "0"
-						sessions-collect
-						http-redir rejoin [vanilla-html-link-prefix script-name "?selector=user-login&user-name=" user-name "&passphrase=" passphrase]
-						]
+				; expected parameters: user-name and passphrase
+
+				either not users-valid-name-and-passphrase? user-name passphrase [
+					http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-user-login-failure" ]
+					quit ; never reached as http-redir 'quits
+				] [
+					; user wants to login:
+					; if he alreay has a session and the session has an user associated
+					; do not simply reuse that session but create a new one instead
+					; we will just invalidate the old session, by that we force that the 
+					; new session will be created after the final redirect
+					if not none? user [ sessions-delete vanilla-session-id ]
+
+					; set user cookie
 					user: users-get-by-name user-name
-					set-cookie "vanilla-preburner" "xxx-rated" "/" " "
-					set-cookie "vanilla-user-id" rejoin [user/get 'id "/" user/get 'valikey] "/" "13-Sep-2079 11:43:00 GMT"
-					session/set 'associated-user-id (user/get 'id)
-					sessions-store vanilla-session-id session
-					if error? try [redirect-to] [redirect-to: "vanilla-user-login-success"]
-					if (length? redirect-to) < 2 [redirect-to: "vanilla-user-login-success"]
-					; print htmlheader print "Chokemun!"
-					if (       (= redirect-to "vanilla-user-logged-out") 
-						or (= redirect-to "vanilla-user-login-failure")
-						) [redirect-to: "start"]
-					http-redir rejoin [vanilla-html-link-prefix script-name "?selector=display&snip=" redirect-to]
-					] [
-					set-cookie "vanilla-user-id" "-1/invalidated" "/" " "
-					http-redir rejoin [vanilla-html-link-prefix script-name "?selector=display&snip=vanilla-user-login-failure"]
-					]
-				sessions-collect
-				quit
+					set-cookie 
+						"vanilla-uid" rejoin [ (user/get 'id) "/" (user/get 'valikey) ]
+						"/" "Thu, 11-Dec-2031 11:42:00 GMT"
+
+					; now let's go for the final redirection ;)
+					if error? try [ redirect-to ] [ redirect-to: "vanilla-user-login-success" ]
+					redirect-to-blacklist: [
+						""
+						"vanilla-user-logged-out"
+						"vanilla-user-login-failure"
+						"vanilla-user-please-login"
+					] 
+					if find redirect-to-blacklist redirect-to [ redirect-to: vanilla-start-snip ]
+
+					http-redir rejoin [ vanilla-base-url vanilla-display-url redirect-to ]
+					quit ; never reached as http-redir 'quits
 				]
+				] ; user-login
+
 			"user-logout" [
 				sessions-delete vanilla-session-id
-				set-cookie "vanilla-user-id" "-1/invalidated" "/" " "
-				http-redir rejoin [vanilla-html-link-prefix script-name "?selector=display&snip=vanilla-user-logged-out"]
-				quit
+				set-cookie "vanilla-uid" "" "/" ""
+				http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-user-logged-out"]
+				quit ; never reached as http-redir 'quits
 				]
 			]
 		]
 	]
 
-vanilla-space-mode: space-meta-get "vanilla-options" "space-mode"
+init-vanilla-user: has [ userid valikey ] [ 
+	user: none
 
-vanilla-session-id: get-cookie "vanilla-session-id"
-vanilla-user-id-cookie: get-cookie "vanilla-user-id"
-
-vanilla-user-id-cookie: parse to-string vanilla-user-id-cookie "/"
-
-either not = (length? vanilla-user-id-cookie) 2
-	[user: none]
-	[vanilla-user-id:  vanilla-user-id-cookie/1
-	 vanilla-user-key: vanilla-user-id-cookie/2
-	 either users-valid-id-and-key? vanilla-user-id vanilla-user-key [
-		user: users-get-by-id vanilla-user-id
-		insert internal-snips vanilla-user-id
-		insert internal-snips "vanilla-user-id"
-		insert internal-snips (user/get 'name)
-		insert internal-snips "vanilla-user-name"
-		] [
-		user: none
-		set-cookie "vanilla-user-id" "-1/invalidated" "/" " "
-		]
+	if not all [
+		(cookie: get-cookie "vanilla-uid")
+		(cookie: parse cookie "/")
+		(= length? cookie 2)
+		(set [ userid valikey ] cookie)
+		(users-valid-id-and-key? userid valikey)
+	] [ 
+		; we received an invalid cookie. we do not want to get
+		; that again, so we invalidate the cookie
+		set-cookie "vanilla-uid" "" "/" ""
+		return
 	]
 
-either sessions-valid? vanilla-session-id [
-	session: sessions-get vanilla-session-id
-	either (user = none) [
-		session/set 'associated-user-id none
-		] [
-		session/set 'associated-user-id user/get 'id
-		]
+	user: users-get-by-id cookie/1
+	repend internal-snips [ 
+		"vanilla-user-id" userid 
+		"vanilla-user-name" (user/get 'name)
+	]
+]
+
+init-vanilla-session: has [ vanilla-sid-cookie ] [
+	session: none
+
+	vanilla-sid-cookie: get-cookie "vanilla-sid"
+	vanilla-session-id: vanilla-sid-cookie
+
+	either sessions-valid? vanilla-session-id [
+		session: sessions-get vanilla-session-id
+		either (user = none) 
+			[ session/set 'associated-user-id none ] 
+			[ session/set 'associated-user-id user/get 'id ]
 	] [
-	; if not = (find system/options/cgi/query-string vanilla-cookie-fail-phrase) none [print textheader print vanilla-cookie-enable-text quit]
-	sessions-delete vanilla-session-id
-	vanilla-session-id: sessions-generate-id
-	sessions-create vanilla-session-id
-	session: sessions-get vanilla-session-id
-	session/set 'remote-ip system/options/cgi/remote-addr
-	either (not = user none) [session/set 'associated-user-id user/get 'id] [session/set 'associated-user-id none]
+		sessions-delete vanilla-session-id
+
+		vanilla-session-id: sessions-generate-id
+		session: sessions-create vanilla-session-id
+		session/set 'remote-ip system/options/cgi/remote-addr
+		either not none? user 
+			[ session/set 'associated-user-id user/get 'id ] 
+			[ session/set 'associated-user-id none ]
+
+		sessions-store vanilla-session-id session
+
+		set-cookie "vanilla-sid" vanilla-session-id "/" "" 
+	]
+]
+
+main: does [
+	; 'globals'
+	user: session: none 
+	vanilla-session-id: none
+	vanilla-space-mode: space-meta-get "vanilla-options" "space-mode"
+
+	; create user and session from the cookies (eventually) supplied
+	init-vanilla-user
+	init-vanilla-session
+
+	; if no user was ever created before, pave the way for your master!
+	if = users-get-max -1 [ 
+		do params
+		if any [ 
+			(error? try [ snip ]) 
+			(not = snip "vanilla-user-register-do") 
+		] [ snip: "vanilla-user-register-master" ]
+
+		display snip return 
+	]
+
+	; go and harvest those timeouting sessions!
+	sessions-collect
+
+	; now serve your client!
+	either empty? params [
+		snip: copy vanilla-start-snip
+		permissions-ok? 'display snip
+		display snip
+	] [
+		handle params
+	]
+
+	; cleanup & persist
 	sessions-store vanilla-session-id session
-	set-cookie "vanilla-session-id" vanilla-session-id "/" " " 
-	]
+	if (not = user none) [users-store user]
+]
 
-if (= users-get-max -1) [
-	either equal? params [] [snip: "vanilla-user-register-master"] [do params]
-	if error? try [snip] [display "vanilla-user-register-master" quit]
-	either (= snip "vanilla-user-register-do") [
-		display "vanilla-user-register-do" quit
-		] [
-		display "vanilla-user-register-master" quit
-		]
-	]
+;; load patches
 
-sessions-collect
+do load to-file rejoin [ lib-dir "etc/" %string-tools.r ]
+do load to-file rejoin [ lib-dir "etc/" %decode-cgi.r ]
 
-either equal? params [] [
-	snip: "start" 
-	permissions-ok? 'display snip 
-	display snip quit
-	] [
-	handle params
-	]
+main
 
-; print "<hr>"
-; probe vanilla-space-mode
-; print "<hr>"
+if all [ not error? try [ __config-loaded ] (value? 'benchmark) benchmark ] [ 
+	__t1: now/time/precise 
+	print rejoin [ "<code> " __t1 - __t0 " </code>" ]
+]
 
-; print join vanilla-session-id ": "
-; probe session/data
-
-; print "<hr>"
-; probe vanilla-user-id-cookie
-; either = user none [print "User not logged in."] [probe user/data]
-
-sessions-store vanilla-session-id session
-if (not = user none) [users-store user]
-
-; print "<hr>"
-
-sessions-collect
-
-; print join "users online: " length? sessions-get-all-ids
-
-quit
-
-; vim: set nowrap syn=rebol:
+; vim: set syn=rebol ts=4 sw=4:

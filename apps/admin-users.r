@@ -1,5 +1,7 @@
-; 2001-02-12
-; updated 2001-05-25 by earl
+; 2001-02-12	chl
+; 2001-05-25 	earl
+; 2001-10-22	earl
+;		* display-url
 
 make object! [
 	doc: "show a list of de/associated users"
@@ -10,16 +12,16 @@ make object! [
 		;; associations
 		assoc-action: either (= "true" to-string u/get 'space-associate) [ "deassociate" ] [ "associate" ]
 		append user-status rejoin [
-			" <small>[<a href={script-name}?selector=display&snip=vanilla-admin-" type 
-         "&admin-section=assocs&action=" assoc-action "&id=" u/get 'id ">" assoc-action "</a>]</small></li>"
+			" <small>[<a href=^"" vanilla-display-url "vanilla-user-admin-" type 
+         	"&admin-section=assocs&action=" assoc-action "&id=" u/get 'id "^">" assoc-action "</a>]</small>"
 			]
 
 		;; enablement/disablement
 		either users-is-master? user [
 			status-action: either (= "true" to-string u/get 'disabled) [ "enable" ] [ "disable" ]
 			append user-status rejoin [ 
-				" <small>[<a href={script-name}?selector=display&snip=vanilla-admin-" type 
-				"&admin-section=user-status&action=" status-action "&id=" u/get 'id ">" status-action "</a>]</small></li>" 
+				" <small>[<a href=^"" vanilla-display-url "vanilla-user-admin-" type 
+				"&admin-section=user-status&action=" status-action "&id=" u/get 'id "^">" status-action "</a>]</small>" 
 				]
 			] [
 			user-status
@@ -44,6 +46,7 @@ make object! [
 				append atx rejoin [ 
 					"<li>" a/get 'name 
 					print-user-status a type
+					"</li>"
 					]
 				]
 			append atx "</ul>"
@@ -56,6 +59,7 @@ make object! [
 				append natx rejoin [
 					"<li>" a/get 'name 
 					print-user-status a type
+					"</li>"
 					]
 				]
 			append natx "</ul>"
@@ -68,6 +72,7 @@ make object! [
 				append disx rejoin [
 					"<li>" a/get 'name 
 					print-user-status a type
+					"</li>"
 					]
 				]
 			append disx "</ul>"

@@ -1,0 +1,41 @@
+
+	     synerge vanilla/R - Quick Installation Guide for Win32
+
+ - Extract the Vanilla win32 distribution (vanilla-x.y.z.zip) to a directory of
+   your choice (e.g. C:\vanilla\)
+
+ - Download REBOL/Core from <URL:http://www.rebol.com/platforms.shtml>. You can
+   use the direct link <URL:http://www.rebol.com/downloads/core031.zip> if you
+   like.
+
+ - Extract rebol031.exe from the REBOL/Core .zip file, and put rebol031.exe in
+   your Vanilla directory (e.g. C:\vanilla\). rebol031.exe is the only file
+   we'll need from the .zip.
+
+ - Download Apache from <URL:http://httpd.apache.org/> and install it. Note
+   (e.g. write down) the path to your Apache installation
+
+ - Copy wrapper.cgi and vanilla.r.conf into Apache's cgi-bin directory, which
+   is a subdirectory in the directory you've installed Apache to in the
+   previous step.
+
+ - Rename wrapper.cgi to vanilla.cgi and vanilla.r.conf to vanilla.cgi.conf.
+
+ - Edit vanilla.cgi with your favorite text-editor and change the first line to
+   point to your REBOL/Core executable (e.g. change it to
+   #!c:\vanilla\rebol031.exe -cs).
+
+ - You're almost done! Edit vanilla.cgi.conf and adapt at least
+   "vanilla-space-identifier" and "vanilla-root". 
+   
+   - Use some random string as "vanilla-space-identifier", for example the
+     current date and time (e.g. vanilla-space-identifier: "2003-09-22 01:51").
+
+   - "vanilla-root" must point to your Vanilla installation directory, but in
+     REBOL notation. (e.g. vanilla-root: "/C/vanilla/" if your vanilla is in
+     C:\vanilla\). Do not forget the trailing slash! (e.g. "/C/vanilla/" but not
+     "/C/vanilla").
+
+ - That's it for now, you should now be able to access your Vanilla instance
+   thru a browser, try <URL:http://localhost/cgi-bin/vanilla.cgi>.
+

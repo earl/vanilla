@@ -1,16 +1,11 @@
 REBOL [
 	Title: "sha1/md5 convenience functions"
 	Author: "earl"
-	Version: 0.1 
+	Version: 0.2 
 ]
 
 clean-hash-string: func [hash] [
-	hash: rejoin [ {"} hash {"} ]
-	hash: replace/all hash "#" ""
-	hash: replace/all hash "^"" ""
-	hash: replace/all hash "{" ""
-	hash: replace/all hash "}" ""
-	return hash
+	enbase/base hash 16
 	]
 
 is-hashed-password?: func [password /local hash-type] [

@@ -4,7 +4,10 @@ make object! [
 	doc: "a simple chat system"
 	talk-max: 30
 	talk-buffer: space-meta-get "vanilla-talk" "talk-buffer"
-	login-msg: "<i>Hey, would you please <a href={script-name}?selector=display&snip=vanilla-user-login&redirect-to=vanilla-talk>login</a> to talk with us?</i>"
+	login-msg: rejoin [
+		"<i>Hey, would you please <a href=^"" vanilla-display-url "vanilla-user-login&redirect-to=vanilla-talk^">login</a>"
+		"to talk with us?</i>"
+		]
 	double: func [i] [i: to-string i either (= 2 (length? i)) [i] [join "0" i]] 
 	talk-format: func [/local lines r] [
 		r: make string! 128

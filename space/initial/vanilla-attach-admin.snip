@@ -1,0 +1,11 @@
+Here you may configure who is allowed to add attachments to (or delete from) snips. Be sure to have read the *vanilla-attach-admin-info* which contains important information about the actual attachment security.
+
+{!attach.set-mode}\
+<form method="POST">\
+<input type="hidden" name="selector" value="display">\
+<input type="hidden" name="snip" value="{.name}">\
+<input type="radio" name="attach-mode" value="master" {!attach.check-if:master}> master </input>
+<input type="radio" name="attach-mode" value="assoc" {!attach.check-if:assoc}> associates </input>
+<input type="radio" name="attach-mode" value="user" {!attach.check-if:user}> registered users </input>
+<input type="radio" name="attach-mode" value="anyone" {!attach.check-if:anyone}> anyone </input><br />
+<input type="submit" name="do-attach.set-mode" value="set mode"></form>
