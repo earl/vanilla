@@ -1,13 +1,15 @@
 ; simpleuserdb.r
 ; 2000-10-29, 2000-11-20
 ; 2001-06-12	earl
-;        * bug fixed: some vars were not declared to be /local
+;       * bug fixed: some vars were not declared to be /local
 ; 2001-07-16	earl
-;        * hashes passwords supporting javascript frontend encryption
-;          and appropriate fallback handling
+;       * hashes passwords supporting javascript frontend encryption
+;         and appropriate fallback handling
+; 2004-01-11	earl
+;	* fixed some nasty empty block bugs
 
 user!: make object! [
-	data: []
+	data: copy []
 	get-all: func [] [data]
 	get-all-keys: func [/local r] [r: [] forskip data 2 [append r data/1] r]
 	get: func [key /local result] [result: none foreach [k v] data [if (= k key) [result: v]] result]
@@ -86,7 +88,7 @@ users-get-id-by-name: func [user-name /local u] [
 	]
 
 users-get-all: func [/local users] [
-	users: []
+	users: copy []
 	for id 0 users-get-max 1 [
 		append/only users users-get-by-id id
 		]
@@ -94,7 +96,7 @@ users-get-all: func [/local users] [
 	]
 
 users-get-all-names: func [/local user-names u] [
-	user-names: []
+	user-names: copy []
 	for id 0 users-get-max 1 [
 		u: users-get-by-id id
 		append user-names u/get 'name

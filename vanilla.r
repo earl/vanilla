@@ -4,17 +4,17 @@ REBOL [
     Authors:	
 		[ "Christian Langreiter" "Andreas Bolka" ]
     Version:	
-		0.6.0
+		0.6.1
 	Date:
-		2003-12-24
+		2004-01-08
 
 	Rights: {
-		Copyright (C) 2000-2003 Andreas Bolka, Christian Langreiter
+		Copyright (C) 2000-2004 Andreas Bolka, Christian Langreiter
 		Licensed under the Academic Free License version 2.0.
 	}
 ]
 
-; $Id: vanilla.r,v 1.2 2003/12/24 00:35:48 earl Exp $
+; $Id: vanilla.r,v 1.5 2004/02/08 17:50:34 earl Exp $
 ; =============================================================================
 ;
 ; 2000-02-11 	0.0.1i	started as "prototypical vanilla rewrite in REBOL"
@@ -102,6 +102,7 @@ REBOL [
 ; 2003-12-24			earl: 
 ;						- removed vanilla-html-link-prefix
 ;						- prepared for release as 0.6.0
+; 2004-01-08			prepared 0.6.1
 ;
 ; =============================================================================
 
@@ -211,7 +212,7 @@ set-default 'vanilla-store-url		rejoin [ vanilla-get-url "?selector=store&snip="
 ; ".xxx" snips are metadata attributes of a snip (like .name, .author, etc.)
 
 internal-snips: reduce [
-	"script-version"		0.5.4
+	"script-version"		0.6.1
 	"script-name"			script-name
 	"now"					now
 	"space-id"				vanilla-space-identifier
@@ -459,7 +460,7 @@ update-recent-stores: func [ snipname ] [
 ]
 
 store: func [snipname snipdata] [
-	if = snipname "" [ http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-store-error" ] ]
+	if = snipname "" [ http-redir rejoin [ vanilla-display-url "vanilla-store-error" ] ]
 	purge-backlinks-for snipname
 	store-raw snipname snipdata
 	create-backlinks-for snipname
@@ -467,7 +468,7 @@ store: func [snipname snipdata] [
 	update-recent-stores snipname
 
 	;display snipname
-	http-redir rejoin [ vanilla-base-url vanilla-display-url url-encode snipname ]
+	http-redir rejoin [ vanilla-display-url url-encode snipname ]
 ]
 
 delete-snip: func [ snipname ] [
@@ -479,9 +480,9 @@ delete-snip: func [ snipname ] [
 			space-store "sysdata-recent-stores" mold odb
 		]
 
-		http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-delete-ok&snip-ex=" snipname ]
+		http-redir rejoin [ vanilla-display-url "vanilla-delete-ok&snip-ex=" snipname ]
 	] [
-		http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-delete-error&snip-ex=" snipname ] 
+		http-redir rejoin [ vanilla-display-url "vanilla-delete-error&snip-ex=" snipname ] 
 	]
 ]
 
@@ -593,7 +594,7 @@ handle: func [params] [
 			"info" [ 
 				print textheader
 				print "synerge vanilla/r"
-				print "Copyright (C) 2000-2003 by Andreas Bolka, Christian Langreiter"
+				print "Copyright (C) 2000-2004 by Andreas Bolka, Christian Langreiter"
 				print mold system/options/cgi
 				]
 			"display-text" [
@@ -628,7 +629,7 @@ handle: func [params] [
 				if (sessions-valid? vanilla-session-id) [
 					sessions-delete vanilla-session-id
 					; print "Content-type: text/html^/^/deleted"
-					http-redir rejoin [ vanilla-base-url vanilla-display-url vanilla-start-snip ]
+					http-redir rejoin [ vanilla-display-url vanilla-start-snip ]
 					quit
 				]
 				] ; end-session
@@ -636,7 +637,7 @@ handle: func [params] [
 				; expected parameters: user-name and passphrase
 
 				either not users-valid-name-and-passphrase? user-name passphrase [
-					http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-user-login-failure" ]
+					http-redir rejoin [ vanilla-display-url "vanilla-user-login-failure" ]
 					quit ; never reached as http-redir 'quits
 				] [
 					; user wants to login:
@@ -662,7 +663,7 @@ handle: func [params] [
 					] 
 					if find redirect-to-blacklist redirect-to [ redirect-to: vanilla-start-snip ]
 
-					http-redir rejoin [ vanilla-base-url vanilla-display-url redirect-to ]
+					http-redir rejoin [ vanilla-display-url redirect-to ]
 					quit ; never reached as http-redir 'quits
 				]
 				] ; user-login
@@ -670,7 +671,7 @@ handle: func [params] [
 			"user-logout" [
 				sessions-delete vanilla-session-id
 				set-cookie "vanilla-uid" "" "/" ""
-				http-redir rejoin [ vanilla-base-url vanilla-display-url "vanilla-user-logged-out"]
+				http-redir rejoin [ vanilla-display-url "vanilla-user-logged-out"]
 				quit ; never reached as http-redir 'quits
 				]
 			]

@@ -1,6 +1,6 @@
 			       synerge vanilla/R
 
-  Copyright (C) 2000-2003 by Andreas Bolka, Christian Langreiter
+  Copyright (C) 2000-2004 by Andreas Bolka, Christian Langreiter
   Licensed under the Academic Free License version 2.0. 
 
 

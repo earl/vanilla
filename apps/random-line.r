@@ -1,10 +1,17 @@
-; chl, 2001-07-12
+context [
 
-make object! [
-	doc: "fetches a random line from a snip"
-	handle: func [param /local snip lines] [
-		snip: space-get param
-		lines: parse/all snip to-string newline
-		pick lines random length? lines
+	doc: "displays a random line from the param snip"
+	history: [
+		2001-07-12 chl "created"
+		2003-12-25 chl "sanitized formatting"
+	]
+
+	handle: func [ param /local snip lines ] [
+		either space-exists? param [
+			random parse/all space-get param to-string newline
+		] [
+			""
 		]
 	]
+
+]

@@ -2,12 +2,18 @@
 
 make object! [
 
+	doc: "embeds the VanillaVista applet" 
+	notes: "The containing snip must be displayed with display-asis and contain a Content-type header."
+	history: [
+		2003-12-23 chl "created"
+	]	
+
 	handle: func [ param /local n ] [
 		foreach [ k v ] reduce [
 			"[jar]" rejoin [ resource-url "vista/VanillaVista-4.jar" ]
-			"[display-url-prefix]" rejoin [ vanilla-base-url vanilla-display-url ]
+			"[display-url-prefix]" rejoin [ vanilla-display-url ]
 			"[fetch-url-prefix]" rejoin [ 
-				vanilla-base-url vanilla-get-url 
+				vanilla-get-url 
 				{?selector=display-asis} 
 				{&snip=vanilla-vista-graph-xml}
 				{&xml-for-snip=} 
@@ -16,7 +22,7 @@ make object! [
 		] [
 			replace/all template k v
 		]
-		return template
+		template
 	]
 
 	template: {
