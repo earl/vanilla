@@ -1,0 +1,13 @@
+{!admin-do}<h4>Set space operation mode</h4><form method=GET action="{script-name}"><input type="hidden" name="selector" value="display"><input type="hidden" name="snip" value="vanilla-admin-master"><input type="hidden" name="admin-section" value="space-mode"><input type="radio" name="space-mode" value="closed" {!admin-mode-check-if:closed}>__closed__ <small>(only associated users can view and contribute to the space)</small>
+<input type="radio" name="space-mode" value="readonly" {!admin-mode-check-if:readonly}>__read-only__ <small>(everyone can view the space, associates can contribute)</small>
+<input type="radio" name="space-mode" value="open" {!admin-mode-check-if:open}>__open__ <small>(everyone can view the space, registered users can contribute)</small>
+<input type="radio" name="space-mode" value="totallyopen" {!admin-mode-check-if:totallyopen}>__totally open__ <small>(everyone can view and contribute to the space)</small>
+
+<input type="submit" value="Set Mode"></form>
+<h4>De/associate users</h4>Associates have certain administrative privileges and are <i>always</i> legitimated to contribute to a space. Associates can associate unassociated registered users as well as unassociate associated colleagues, which provides for a totally necessary level of sociodynamic tension.
+
+{!admin-users:master}
+<h4>Edit templates</h4><ul><li><a href="{script-name}?selector=edit&snip=vanilla-template">main template</a></li>
+<li><a href="{script-name}?selector=edit&snip=vanilla-edit-form-template">edit form template</a></li>
+<li><a href="{script-name}?selector=edit&snip=du-jour-entry-template">du-jour (weblog) entry template</a></li>
+</ul>
