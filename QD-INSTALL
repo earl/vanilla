@@ -1,0 +1,27 @@
+QUICK AND DIRTY INSTALLATION INSTRUCTIONS
+chris@langreiter.com           2000-05-14
+
+	(the full and funky and obsolete edition is available at 
+ 	 http://www.langreiter.com/vanilla/INSTALL)
+
+1. 	Download Apache (or any other web server with CGI capability).
+   	http://www.apache.org/httpd.html
+2. 	Download Rebol.
+   	http://www.rebol.com
+3. 	Install both. It's easy. Follow the instructions. Read the manuals.
+4a. 	Place your vanilla.r, simplespace.r and vanilla.r.conf in the cgi-bin 
+	directory of your beloved server software.
+4b. 	Place vanilla.01-line.gif in the directory accessible via 
+	http://localhost/vanilla (something like htdocs/vanilla).
+5. 	Edit the first line of vanilla.r to point to your Rebol interpreter.
+6. 	Copy the unzipped "vanilla" directory to c: (or d: or e:\games\retro\funky 
+	or whatever) and modify the entries in vanilla.r.conf accordingly.
+7. 	Chant "I love Vanilla very much!" eight times (loud!)
+8. 	Fire up the browser of your choice and type, with trembling hands, 
+	localhost/cgi-bin/vanilla.r
+9. 	If everything works (something [...] appears on your screen), 
+	immediately stand up and chant again! Jump around and shout to your 
+	co-workers! Tell them about your emotions! Wooohaaaa! 
+	Demand free beer for everyone!
+10. 	If it doesn't work, well ... Hmmmmm .... Well, then wait. Do nothing. 
+	Don't touch anything. Wait till I come to speak with you. Or someone else.
