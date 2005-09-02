@@ -1,5 +1,6 @@
 ; 2004-02-15	johannes lerch, (v++)
 ; 2004-07-17	earl
+; 2005-01-28	earl (fixed bug in http-redir usage)
 
 make object! [
 
@@ -43,7 +44,7 @@ make object! [
 
 	c: rejoin [ "comment-" s "-" (1 + length? get-comments-for s) ]
 	store-raw c comment-content
-	http-redir rejoin [ vanilla-base-url vanilla-display-url s ]
+	http-redir rejoin [ vanilla-display-url s ]
     ]
 
     do-show-brief: func [ s /local cs tmp us u res ] [
