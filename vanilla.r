@@ -109,7 +109,10 @@ REBOL [
 ;						- removed dns lookup for last-store-addr meta
 ; 2004-07-07			earl: added sniptag support
 ; 2004-11-07			prepared 0.6.2
-; 2004-11-11			fixed cookie bug introduced by "lynx fix"
+; 2004-11-11			earl: fixed cookie bug introduced by "lynx fix"
+; 2005-08-31			earl:
+;						- improved permissions checking
+;						- added "vanilla-selector" to internal snips
 ;
 ; =============================================================================
 
@@ -564,30 +567,43 @@ eval-p: func [mode class request-class snip /local always-visible-snips] [
 	always-visible-snips: [
 		"vanilla-user-register" "vanilla-user-register-do" 
 		"vanilla-user-login" "vanilla-user-logged-out" "vanilla-user-login-failure"
+		"vanilla-user-please-login"
 	]
 	if = class 'edit [always-visible-snips: []]
-	return ((= vanilla-space-mode mode) and (= class request-class) and (= none find always-visible-snips snip))
+	return ((= vanilla-space-mode mode) and (= class request-class) and (none? find always-visible-snips snip))
 ]
 
-permissions-ok?: func [class snip /local always-visible-snips] [
+permissions-fail?: func [class snip] [
 	if all [ (not = user none) (= "true" to-string (user/get 'disabled)) ]
-		[display "vanilla-user-disabled" quit]
+		[return "vanilla-user-disabled"]
 	if (eval-p "closed" 'display class snip) and (= user none) 
-		[display "vanilla-user-please-login" quit]
+		[return "vanilla-user-please-login"]
 	if (eval-p "closed" 'edit class snip) and (= user none) 
-		[display "vanilla-user-please-login" quit]
+		[return "vanilla-user-please-login"]
 	if (eval-p "closed" 'display class snip) and (not users-is-associate? user) 
-		[display "vanilla-user-wait-for-association" quit]
+		[return "vanilla-user-wait-for-association"]
 	if (eval-p "closed" 'edit class snip) and (not users-is-associate? user) 
-		[display "vanilla-user-wait-for-association" quit]
+		[return "vanilla-user-wait-for-association"]
 	if (eval-p "readonly" 'edit class snip) and (= user none) 
-		[display "vanilla-user-please-login" quit]
+		[return "vanilla-user-please-login"]
 	if (eval-p "readonly" 'edit class snip) and (not users-is-associate? user) 
-		[ either (not = user/get 'id space-meta-get snip "originator-id") 
-			[ display "vanilla-user-editing-disallowed" quit ] 
-			[ ] ]
+		[ if (not = user/get 'id space-meta-get snip "originator-id") 
+			[ return "vanilla-user-editing-disallowed"] ]
 	if (eval-p "open" 'edit class snip) and (= user none) 
-		[display "vanilla-user-please-login" quit]
+		[return "vanilla-user-please-login"]
+
+	return none
+]
+
+permissions-ok?: func [class snip /redir /local cause] [
+	if cause: permissions-fail? class snip [
+		either redir [
+			http-redir rejoin [ vanilla-display-url cause ]
+		] [
+			display cause
+			quit
+		]
+	]
 ]
 
 handle: func [params] [
@@ -604,7 +620,8 @@ handle: func [params] [
 
 	either (find valid-selectors selector) = none
 		[ snip: "vanilla-no-such-selector" display snip ]
-		[ switch selector [
+		[ repend internal-snips [ "vanilla-selector" selector ]
+		  switch selector [
 			"display" [
 				snip: any [ attempt [ snip ] vanilla-start-snip ]
 				permissions-ok? 'display snip
