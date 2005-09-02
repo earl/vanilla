@@ -1,5 +1,6 @@
 ; 2004-05-03	johannes lerch, vdp
 ; 2004-07-17	earl
+; 2005-08-31	added permission check
 
 make object! [
     odbname: copy "appdata-sticky"
@@ -9,6 +10,8 @@ make object! [
 	    return render-stickylink
 	]
 
+	;; toggle stickyness
+	permissions-ok?/redir 'edit snip
 	if not space-exists? odbname [ space-store odbname mold [] ]
 	odb: load space-get odbname
 	either = "true" sticky 
