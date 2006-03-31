@@ -57,7 +57,7 @@ make object! [
     ; ---
 
     handle-add: func [ for-snip /local fname ] [
-	if not modify-permissions-ok? for-snip [ return ]
+	if not modify-permissions-ok? for-snip [ return ] ; @@ redirect to a nice error message
 	if attempt [ do-attach.add-file ] [ handle-add-file for-snip ]
 	if attempt [ do-attach.add-url ] [ handle-add-url for-snip ]
     ]
