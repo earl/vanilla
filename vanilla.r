@@ -481,7 +481,7 @@ update-recent-stores: func [ snipname ] [
 ]
 
 store: func [snipname snipdata sniptags] [
-	if = snipname "" [ http-redir rejoin [ vanilla-display-url "vanilla-store-error" ] ]
+	if empty? snipname [ http-redir rejoin [ vanilla-display-url "vanilla-store-error" ] ]
 	purge-backlinks-for snipname
 	store-raw snipname snipdata
 	create-backlinks-for snipname
@@ -595,14 +595,9 @@ permissions-fail?: func [class snip] [
 	return none
 ]
 
-permissions-ok?: func [class snip /redir /local cause] [
+permissions-ok?: func [class snip /local cause] [
 	if cause: permissions-fail? class snip [
-		either redir [
-			http-redir rejoin [ vanilla-display-url cause ]
-		] [
-			display cause
-			quit
-		]
+		http-redir rejoin [ vanilla-display-url cause "&redirect-to=" (url-encode snip) ]
 	]
 ]
 
