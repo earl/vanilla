@@ -52,16 +52,15 @@ make object! [
 	]
 
 	handle: func [ /local 
+        backlinks
 		out
 		txt-bl-count
 		txt-snip-cur txt-snip-for 
 		txt-lnk-prev txt-snip-prev
 		txt-lnk-next txt-snip-next
 	] [
-
-		if not value? 'blb-for [ return " __nothin__" ]
-		self/backlinks: sort space-meta-get blb-for "fast-backlinks"
-		if	not value? 'blb-cur [ blb-cur: first backlinks ]
+        if none? attempt [ self/backlinks: sort space-meta-get blb-for "fast-backlinks" ] [ return "__nothin__" ]
+		if not value? 'blb-cur [ blb-cur: first backlinks ]
 
 		txt-bl-curnr: index? find backlinks blb-cur
 		txt-bl-count: length? backlinks
