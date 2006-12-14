@@ -33,6 +33,11 @@ a {
 #td11 { /* empty top-left bar */
     width:		25%;
     background-color:	#6080A0;
+    color:              white;
+
+    font-size:		10px;
+    
+    padding:            4px 1px 6px 2px;
 }
 
 #td12 { /* navbar (top-right) */
