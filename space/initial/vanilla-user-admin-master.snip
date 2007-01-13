@@ -24,11 +24,32 @@ Associates have certain administrative privileges and are <i>always</i> legitima
 {!admin-users:master}\
 
 <hr /><h4><a name="templates"></a>edit templates</h4>\
+\
+<h5>vanilla core templates</h5>\
 <ul>\
-<li><a href="{vanilla-edit-url}vanilla-template">main template</a></li>\
-<li><a href="{vanilla-edit-url}vanilla-edit-form-template">edit form template</a></li>\
-<li><a href="{vanilla-edit-url}du-jour-entry-template">du-jour (weblog) entry template</a></li>\
-</ul>
+<li>*vanilla-template*: variables: [snip-content]</li>\
+<li>*vanilla-edit-form-template*: variables: [snip-content-for-editing]</li>\
+</ul>\
+\
+<h5>du-jour (weblog) templates</h5>\
+<ul>\
+<li>*template-du-jour*: wraps the complete weblog. variables: [entries], [off-older], [off-younger]</li>\
+<ul>\
+    <li>*template-du-jour-day*: wraps a single day, which may contain multiple items. variables: [ayago], [isodate], [fulldate] </li>\
+    <li>*template-du-jour-item*: wraps a single item. variables: [title], [isodate], [fulldate]</li>\
+    <li>common variables for day/item: [content], [name], [author], [creator], [age]</li>\
+</ul>\
+</ul>\
+\
+<h5>comment templates</h5>\
+<ul>\
+<li>*template-comments-brief*: variables: [#comments], [commenters], [for-snip]</li>\
+<li>*template-comments-item*: variables: [content], [name], [author], [creator], [age], [edit-button], [for-snip] </li>\
+<li>*template-comments-create*: variables: [for-snip]</li>\
+<li>*template-comments-nocomments*: variables: [for-snip]</li>\
+<li>*template-comments-loginfirst*: variables: [for-snip] </li>\
+<li>*template-comments-editlink*: variables: [name], [for-snip]</li>\
+</ul>\
 
 <hr /><h4><a name="attachments"></a>attachment config</h4>\
 {vanilla-attach-admin}
