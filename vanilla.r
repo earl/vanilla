@@ -801,7 +801,9 @@ main: does [
 do load to-file rejoin [ lib-dir "etc/" %string-tools.r ]
 do load to-file rejoin [ lib-dir "etc/" %decode-cgi.r ]
 
-main
+if system/options/cgi/request-method [
+    main
+]
 
 if all [ not error? try [ __config-loaded ] (value? 'benchmark) benchmark ] [ 
 	__t1: now/time/precise 
