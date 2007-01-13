@@ -113,6 +113,7 @@ REBOL [
 ; 2005-08-31			earl:
 ;						- improved permissions checking
 ;						- added "vanilla-selector" to internal snips
+; 2007-01-13            earl: removed unused vanilla-link-rules
 ;
 ; =============================================================================
 
@@ -255,7 +256,6 @@ to-vanilla-date: func [date [date!] /local vdm vdd] [
 ]
 
 vanilla-date: to-vanilla-date now
-vanilla-link-rules: []
 
 ; --- html formatting functions ---
 
@@ -270,7 +270,6 @@ html-format-breaks: func [snip] [
 ]
 
 html-format-links: func [snip /local link-rule link] [
-	;vanilla-link-rules: to-block space-expand space-get "vanilla-links"
 	link-rule: [thru "*" copy link to "*"]
 	forever [
 		link: none
