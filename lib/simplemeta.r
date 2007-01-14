@@ -7,6 +7,7 @@ REBOL []
 meta-esc: to-char 1
 
 esc-to-meta: func [ data /local tmp ext ] [
+    data: copy data
 	while [ all [ (tmp: find/tail data "\") (not tail? tmp) (char: first tmp) ] ] [
 		replace data 
 			join "\" char 
@@ -16,6 +17,7 @@ esc-to-meta: func [ data /local tmp ext ] [
 ]
 
 meta-to-esc: func [ data /local tmp ext ] [
+    data: copy data
 	while [ all [ tmp: find/tail data meta-esc ext: copy/part tmp 9 ] ] [
 		replace data 
 			join meta-esc ext 
@@ -25,6 +27,7 @@ meta-to-esc: func [ data /local tmp ext ] [
 ]
 
 meta-to-plain: func [ data /local tmp ext ] [
+    data: copy data
 	while [ all [ tmp: find/tail data meta-esc ext: copy/part tmp 9 ] ] [
 		replace data 
 			join meta-esc ext 
@@ -34,6 +37,7 @@ meta-to-plain: func [ data /local tmp ext ] [
 ]
 
 meta-to-html: func [ data /local tmp ext src dst ] [
+    data: copy data
 	while [ all [ tmp: find/tail data meta-esc ext: copy/part tmp 9 ] ] [
 		src: join meta-esc ext
 
@@ -52,9 +56,7 @@ meta-to-html: func [ data /local tmp ext src dst ] [
 ]
 
 esc-to-html: func [ data ] [
-	data: esc-to-meta data
-	data: meta-to-html data
-	data
+    meta-to-html esc-to-meta data
 ]
 
 comment {
