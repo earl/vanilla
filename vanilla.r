@@ -114,6 +114,7 @@ REBOL [
 ;						- improved permissions checking
 ;						- added "vanilla-selector" to internal snips
 ; 2007-01-13            earl: removed unused vanilla-link-rules
+; 2007-01-14            earl: cgi check for easier wrapping of vanilla.r
 ;
 ; =============================================================================
 
@@ -796,10 +797,11 @@ main: does [
 	if (not = user none) [users-store user]
 ]
 
-;; load patches
+;; load patches / utilities
 
 do load to-file rejoin [ lib-dir "etc/" %string-tools.r ]
 do load to-file rejoin [ lib-dir "etc/" %decode-cgi.r ]
+do load to-file rejoin [ lib-dir "etc/" %collect.r ]
 
 if system/options/cgi/request-method [
     main
