@@ -1,16 +1,12 @@
 #!@@path-to-rebol@@ -cs
 
 REBOL [
-    Title: 
-	"vanilla cgi wrapper"
-    Date:
-	2003-09-22
-
+    Title:  "vanilla cgi wrapper"
+    Date:   2003-09-22
     Rights: {
-	    Copyright (C) 2000-2003 Andreas Bolka, Christian Langreiter
+	    Copyright (C) 2000-2007 Andreas Bolka, Christian Langreiter
 	    Licensed under the Academic Free License version 2.0.
     }
-
 ]
 
 ;; debugging support
@@ -27,8 +23,11 @@ either exists? __vhost-conf
 ;; tell vanilla that the config has already been loaded
 __config-loaded: true
 
-;; load vanilla
-do load to-file join vanilla-root "vanilla.r"
+;; load vanilla, restore vanilla's script header
+__script: load/header to-file join vanilla-root "vanilla.r"
+system/script/header: first __script
+do next __script
+
 
 ; -------------------
 ; vim: set syn=rebol:
