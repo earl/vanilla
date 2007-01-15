@@ -95,9 +95,9 @@ parse-raw-link: func [
     ]
 
     prefixes: extract to-block space-expand space-get "vanilla-links" 2
-    prefix: find rawlink ":"
+    prefix: find link-target ":"
 
-    either all [ prefix (find prefixes copy/part rawlink prefix) ] [
+    either all [ prefix (find prefixes copy/part link-target prefix) ] [
         parse-external-link rawlink link-text link-target 
     ] [
         parse-internal-link rawlink link-text link-target

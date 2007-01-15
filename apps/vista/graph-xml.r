@@ -2,100 +2,57 @@
 ; updated 2001-11-16 (made more robust)
 ; updated 2002-04-21 (now outputs graphxml instead of vanilla-vista-xml ;-) 
 ; updated 2002-05-09 (made simpler and compatible with vv-4)
+; 2007-01-15 earl: complete rewrite
 
-make object! [
-	doc: "generates a graphxml representation of the vanilla link structure"
-	edges: copy []
-	nodes: copy []
-	append-node: func [x] [
-		if not found? find nodes x [append nodes x]
-	]
-	links-for: func [n /local snip r link links] [
-		; *** should be replaced by space-links/forward once that's there ***
-		r: copy [] links: copy []
-		snip: space-get n
-		vanilla-link-rules: to-block space-expand space-get "vanilla-links"
-		link-rule: [thru "*" copy link to "*"]
-		link: none
-		forever [
-			parse snip link-rule
-			either link = none
-				[break]
-				[snip: replace/all snip rejoin ["*" link "*"] "" append links link]
-			link: none
-			]
-		foreach link links [
-			if (is-internal-link? link) and (space-exists? link) [append r link]
-			]
-		r
-		]
-	assemble-backlinks-for: func [s /local b] [
-		append-node s
-		if block? (space-meta-get s "fast-backlinks") [
-			foreach b (space-meta-get s "fast-backlinks") [
-				append/only edges reduce [b s] 
-				append-node b
-				]
-			]
-		] 
-	assemble-forward-links-for: func [s /local f] [
-		append-node s
-		foreach f (links-for s) [
-			append/only edges reduce [s f]
-			append-node f 
-			]
-		]	
-	build-vanilla-xml: func [/local r edge n] [
-		r: {<?xml version="1.0" encoding="ISO-8859-1"?>}
-		; r: copy ""
-		append r "<GraphXML><graph>"
-		foreach n nodes [
-			append r rejoin [
-				{<node name="} 
-				n	
-				{"><label>} n {</label>
-				</node>}
-			]
-		]
-		edges: unique edges
-		foreach edge edges [
-			append r rejoin ["<edge source=^"" edge/1 "^" target=^"" edge/2 "^"/>"]
-			]
-		append r "</graph></GraphXML>"
-		r
-		]
-	handle: func [param /local r for-snip backlink backlinks forward-links] [
-		r: copy ""
-		
-		if error? try [for-snip: xml-for-snip] [for-snip: param]
-		if none? for-snip [for-snip: "start"]
+context [
+    handle: func [param /local snipname nodes edges] [
+        snipname: any [ attempt [ xml-for-snip ] param "start" ]
 
-		if not space-exists? for-snip [
+		if not space-exists? snipname [
 			return {<GraphXML><graph><node name="no snip"><label>no snip</label></node></graph></GraphXML>}
 		] 
 
-		assemble-backlinks-for for-snip
-		assemble-forward-links-for for-snip
+        ;; gather edges up to 2 steps away from snipname
+        edges: unique collect 'emit [
+            foreach link-1 forwardlinks-for snipname [
+                emit/only reduce [ snipname link-1 ]
+                foreach link-2 forwardlinks-for link-1 [
+                    emit/only reduce [ link-1 link-2 ]
+                ]
+            ]
+            foreach link-1 backlinks-for snipname [
+                emit/only reduce [ link-1 snipname ]
+                foreach link-2 backlinks-for link-1 [
+                    emit/only reduce [ link-2 link-1 ]
+                ]
+            ]
+        ]
 
-		backlinks: (space-meta-get for-snip "fast-backlinks")
-		if not = none backlinks [
-			foreach link backlinks [
-				assemble-backlinks-for link
-				assemble-forward-links-for link
-				]
-			]
+        ;; extract nodes from the edges
+        nodes: unique collect 'emit [
+            foreach e edges [
+                emit first e
+                emit second e
+            ]
+        ]
 
-		forward-links: (links-for for-snip)
-		if not = none forward-links [
-			foreach link forward-links [
-				assemble-backlinks-for link
-				assemble-forward-links-for link
-				]
-			]
-		
-		; append r mold snip-ids
-		; append r "<br>"
-		; append r mold edges
-		return build-vanilla-xml
-		]
-	]
+        ;; format graphxml
+        rejoin-with collect 'emit [
+		    emit {<?xml version="1.0" encoding="ISO-8859-1"?>}
+            emit {<GraphXML>}
+            emit {<graph>}
+            foreach n nodes [
+                emit rejoin [ 
+                    {<node name="} url-encode n {"><label>} html-encode n {</label></node>}
+                ]
+            ]
+            foreach e edges [
+                emit rejoin [ 
+                    {<edge source="} url-encode first e {" target="} url-encode second e {" />} 
+                ]
+            ]
+            emit {</graph>}
+            emit {</GraphXML>}
+        ] "^/"
+    ]
+]
