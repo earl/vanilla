@@ -4,12 +4,12 @@ REBOL [
     Authors:	
 		[ "Christian Langreiter" "Andreas Bolka" ]
     Version:	
-		0.6.2
+		0.6.3
 	Date:
-		2004-11-07
+		2007-01-14
 
 	Rights: {
-		Copyright (C) 2000-2004 Andreas Bolka, Christian Langreiter
+		Copyright (C) 2000-2007 Andreas Bolka, Christian Langreiter
 		Licensed under the Academic Free License version 2.0.
 	}
 ]
@@ -113,8 +113,9 @@ REBOL [
 ; 2005-08-31			earl:
 ;						- improved permissions checking
 ;						- added "vanilla-selector" to internal snips
-; 2007-01-13            earl: removed unused vanilla-link-rules
-; 2007-01-14            earl: cgi check for easier wrapping of vanilla.r
+; 2007-01-12            earl: removed unused vanilla-link-rules
+; 2007-01-13            earl: cgi check for easier wrapping of vanilla.r
+; 2007-01-14            earl: alias linking
 ;
 ; =============================================================================
 
@@ -206,6 +207,7 @@ if error? try [ __config-loaded ] [
 ; load internal libs
 do load to-file join lib-dir "secure-hash.r"
 do load to-file join lib-dir "simplemeta.r"
+do load to-file join lib-dir "som.r"
 
 ; load pluggable libs
 do load to-file rejoin [ lib-dir space-accessor ".r" ]
@@ -260,6 +262,16 @@ vanilla-date: to-vanilla-date now
 
 ; --- html formatting functions ---
 
+html-encode: func [text] [
+    text: copy text
+    replace/all text "&" "&amp;"
+    replace/all text "<" "&lt;"
+    replace/all text ">" "&gt;"
+    replace/all text "^"" "&quot;"
+    replace/all text "^'" "&#39;"
+    text
+]
+
 html-format-paragraphs: func [snip] [
 	replace/all snip "^/^/" "<p>"
 	snip
@@ -270,58 +282,56 @@ html-format-breaks: func [snip] [
 	snip
 ]
 
-html-format-links: func [snip /local link-rule link] [
-	link-rule: [thru "*" copy link to "*"]
-	forever [
-		link: none
-		parse snip link-rule
-		either link = none
-			[return snip]
-			[snip: html-link-me-up snip link]
-	]
-]
-
-is-internal-link?: func [link /local rules found ] [
-	if none? link [ return false ]
-	; attention: has to be in sync with flexible-link-up
-	rules: to-block space-expand space-get "vanilla-links"
-	pre-colon: none
-	parse link [ copy pre-colon to ":" to end ]
-	found: find rules pre-colon
-	; hmmm, have to think about pre-snip-existence-creation of metadata/fast-backlinks ...
-	; either (= found none) [either space-exists? link [return true] [return false]] [return false]
-	either found? find rules pre-colon [ return false ] [ return true ]
-]
-
-flexible-link-up: func [str /local html-str full pre-colon post-colon post-slashes rules rule found ] [
+html-format-links: func [snipdata /local src-txt dst-txt rules] [
     rules: to-block space-expand space-get "vanilla-links"
+    foreach link links-in snipdata [
+        src-txt: node-fulltext? link
+        dst-txt: none
+        switch node-type? link [
+            internal-link [ dst-txt: render-internal-link link ]
+            external-link [ dst-txt: render-external-link link rules ]
+        ]
+        if dst-txt [ replace/all snipdata src-txt dst-txt ]
+    ]
+    snipdata
+]
 
-    parse str [ copy pre-colon to ":" thru ":" copy post-colon to end ]
-    if post-colon [ parse post-colon [ thru "//" copy post-slashes to end ] ]
+render-internal-link: func [link /local class] [
+    link-target: node-attr link 'link-target
+    link-text: any [ (node-attr link 'link-text) link-target ]
 
-    found: find rules pre-colon
-    either none? found [
-        ; @@ html-encode
-        html-str: replace/all copy str "&" "&amp;"
-        either space-exists? str
-            [ return rejoin [ {<a href="} vanilla-display-url url-encode str {">} html-str {</a>} ] ]
-            [ return rejoin [ {[create <a href="} vanilla-new-url url-encode str {">} html-str {</a>]} ] ]
+    either space-exists? link-target [
+        rejoin [ 
+            {<a class="internal" href="} vanilla-display-url (url-encode link-target) {">}
+                html-encode link-text
+            {</a>}
+        ]
     ] [
-        rule: copy first next found
-        replace/all rule 'full str
-        replace/all rule 'pre-colon any [ pre-colon "" ]
-        replace/all rule 'post-colon any [ post-colon "" ]
-        replace/all rule 'post-slashes any [ post-slashes "" ]
-        replace/all rule 'url-encoded-post-colon url-encode any [ post-colon "" ]
-
-        return rejoin rule
+        rejoin [
+            {[create }
+            {<a class="internal create" href="} vanilla-new-url (url-encode link-target) {">}
+                html-encode link-target
+            {</a>}
+            {]}
+        ]
     ]
 ]
 
-html-link-me-up: func [snip link] [
-	replace/all snip "%2F" "/"
-	replace/all/case snip rejoin ["*" link "*"] flexible-link-up link
-	return snip
+render-external-link: func [link rules] [
+    link-target: node-attr link 'link-target
+    link-text: node-attr link 'link-text
+
+    either link-text [
+        rejoin [ {<a class="external" href="} link-target {">} link-text {</a>} ]
+    ] [
+        href: copy first select/skip rules (node-attr link 'pre-colon) 2
+        replace/all href 'full link-target
+        replace/all href 'pre-colon any [ (node-attr link 'pre-colon) "" ]
+        replace/all href 'post-colon any [ (node-attr link 'post-colon) "" ]
+        replace/all href 'post-slashes any [ (node-attr link 'post-slashes) "" ]
+        replace/all href 'url-encoded-post-colon url-encode any [ (node-attr link 'post-colon) "" ]
+        href
+    ]
 ]
 
 html-format-bold: func [snip] [
@@ -342,41 +352,31 @@ html-fixup-umlauts: func [snip] [
 	replace/case/all snip "Ä" "&Auml;"
 	replace/case/all snip "Ö" "&Ouml;"
 	replace/case/all snip "Ü" "&Uuml;"
-	return snip
+    snip
 ]
 
 html-escape-newlines: func [snip] [
-	snip: replace/all snip (esc-to-meta join "\" newline) ""
-	snip: replace/all snip (esc-to-meta join "\" crlf) ""
-	snip: replace/all snip (esc-to-meta join "\" cr) ""
-	snip
+	replace/all snip (esc-to-meta join "\" newline) ""
+	replace/all snip (esc-to-meta join "\" crlf) ""
+	replace/all snip (esc-to-meta join "\" cr) ""
+    snip
 ]
 
 html-format: func [snip] [
-	snip: esc-to-meta snip
-	snip: html-escape-newlines snip
-
-	snip: html-format-breaks snip
-	snip: html-format-links snip
-	snip: html-format-bold snip
-	snip: html-fixup-umlauts snip
-
+    snip: copy snip
+	snip: esc-to-meta snip      ; non-som formatting must precede ...
+	html-escape-newlines snip
+	html-format-breaks snip       
+	html-format-bold snip
+	html-fixup-umlauts snip
 	snip: meta-to-esc snip
+
+	html-format-links snip      ; ... som-based formatting (which is esc-aware)
 	snip
 ]
 
 ; --- pre-cached backlink generation functions ---
 ; --- super-fast edition, chl 2001-05-25 ---
-
-internal-links-in: func [snip-data /local links e r] [
-	links: copy [] r: copy []
-	snip-data: esc-to-meta snip-data
-	parse snip-data [ any [ thru "*" copy text to "*" skip (append links text) ] ]
-	foreach e links 
-		[ if is-internal-link? e [append r e] ]
-
-	r
-]
 
 snip-content-heuristically-ok?: func [ snip /local sdata ct tmp ] [
 	odd? length? split (esc-to-meta space-get snip) "*"
@@ -404,12 +404,12 @@ modify-backlinks: func [for-snip snip-name f /local old-backlinks] [
 ]
 
 purge-backlinks-for: func [snip-name /local backlinking-snip] [
-	foreach backlinking-snip (internal-links-in space-get snip-name) 
+	foreach backlinking-snip (forwardlinks-in space-get snip-name) 
 		[ modify-backlinks backlinking-snip snip-name :exclude ]
 ]
 
 create-backlinks-for: func [snip-name /local snip-to-backlink] [
-	foreach snip-to-backlink (internal-links-in space-get snip-name) 
+	foreach snip-to-backlink (forwardlinks-in space-get snip-name) 
 		[ modify-backlinks snip-to-backlink snip-name :union ]
 ]
 
@@ -419,27 +419,16 @@ new: func [snipname] [
 	edit snipname
 	]
 
-edit: func [snipname /local htmlname snip edit-ct edit-form] [
+edit: func [snipname /local snip edit-form] [
 	repend internal-snips [ ".name" snipname ]
 	repend internal-snips [ ".url-name" (url-encode snipname) ]
-
-	; @@ html-encode
-	htmlname: copy snipname
-	replace/all htmlname "&" "&amp;"
-	replace/all htmlname "^"" "&quot;"
-	replace/all htmlname "^'" "&#39;"
-	repend internal-snips [ ".html-name" htmlname ]
-
-	print htmlheader
-	edit-ct: space-get snipname
-	replace/all edit-ct "&" "&amp;"
-	replace/all edit-ct "<" "&lt;"
-	replace/all edit-ct ">" "&gt;"
+	repend internal-snips [ ".html-name" (html-encode snipname) ]
 
 	edit-form: space-expand space-get "vanilla-edit-form-template"
-	replace/all edit-form "[snip-content-for-editing]" rejoin [ newline edit-ct ]
+	replace/all edit-form "[snip-content-for-editing]" rejoin [ newline html-encode space-get snipname ]
 	replace/all edit-form "[snip-tags]" any [ (space-meta-get snipname "tags") (copy "") ]
 
+    print htmlheader
 	print replace (space-expand space-get "vanilla-template") "[snip-content]" edit-form 
 ]
 
@@ -520,12 +509,7 @@ display-common-procedure: func [snipname /local metadata] [
 
 	repend internal-snips [ ".name" snipname ]
 	repend internal-snips [ ".url-name" (url-encode snipname) ]
-	; @@ html-encode
-	htmlname: copy snipname
-	replace/all htmlname "&" "&amp;"
-	replace/all htmlname "^"" "&quot;"
-	replace/all htmlname "^'" "&#39;"
-	repend internal-snips [ ".html-name" htmlname ]
+	repend internal-snips [ ".html-name" (html-encode snipname) ]
 
 	metadata: space-meta-get-all snipname
 	forskip metadata 2 
@@ -624,9 +608,9 @@ handle: func [params] [
 				]
 			"info" [ 
 				print textheader
-				print "synerge vanilla/r"
-				print "Copyright (C) 2000-2004 by Andreas Bolka, Christian Langreiter"
-				print mold system/options/cgi
+				print [ "synerge vanilla/R" system/script/header/version ]
+				print "Copyright (C) 2000-2007 by Andreas Bolka, Christian Langreiter"
+				print [ newline mold system/options/cgi ]
 				]
 			"display-text" [
 				permissions-ok? 'display snip
