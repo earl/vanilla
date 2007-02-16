@@ -285,9 +285,9 @@ html-format-breaks: func [snip] [
 html-format-links: func [snipdata /local src-txt dst-txt rules] [
     rules: to-block space-expand space-get "vanilla-links"
     foreach link links-in snipdata [
-        src-txt: node-fulltext? link
+        src-txt: node-fulltext link
         dst-txt: none
-        switch node-type? link [
+        switch node-type link [
             internal-link [ dst-txt: render-internal-link link ]
             external-link [ dst-txt: render-external-link link rules ]
         ]
@@ -298,7 +298,7 @@ html-format-links: func [snipdata /local src-txt dst-txt rules] [
 
 render-internal-link: func [link /local class] [
     link-target: node-attr link 'link-target
-    link-text: any [ (node-attr link 'link-text) link-target ]
+    link-text: either empty? node-children link [ link-target ] [ first node-children link ]
 
     either space-exists? link-target [
         rejoin [ 
@@ -319,11 +319,13 @@ render-internal-link: func [link /local class] [
 
 render-external-link: func [link rules] [
     link-target: node-attr link 'link-target
-    link-text: node-attr link 'link-text
+    link-text: attempt [ first node-children link ]
 
     either link-text [
+        ;; aliased links are rendered directly
         rejoin [ {<a class="external" href="} link-target {">} link-text {</a>} ]
     ] [
+        ;; no-aliased links go through prefix expansion
         href: copy first select/skip rules (node-attr link 'pre-colon) 2
         replace/all href 'full link-target
         replace/all href 'pre-colon any [ (node-attr link 'pre-colon) "" ]

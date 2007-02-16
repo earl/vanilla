@@ -6,26 +6,26 @@ REBOL [ title: "vanilla snip object model" ] ; aka snipjects aka sniplib
 ;;;
 
 ;; -- node :: [ type fulltext [attrs]? children* ]
-;; -- internal-link attrs: link-text?, link-target
-;; -- external-link attrs: link-text?, link-target, pre-colon, post-colon, post-slashes?
+;; -- internal-link attrs: link-target; children: text?
+;; -- external-link attrs: link-target, pre-colon, post-colon, post-slashes?; children: text?
 
-;; node-type?: func [ node ] => type
-;; node-attrs?: func [ node ] => [attrs]|none
-;; node-children?: func [ node ] => [children]
+;; node-type: func [ node ] => type
+;; node-attrs: func [ node ] => [attrs]|none
+;; node-children: func [ node ] => [children]
 
 ;; nodes-by-type: func [ type nodes ] => [nodes]
 ;; node-attr: func [ node attr-name ] => attr-value|none
 
-node-type?: func [ node ] [ first node ]
-node-fulltext?: func [ node ] [ second node ]
-node-attrs?: func [ node ] [ any [ third node copy [] ] ]
-node-children?: func [ node ] [ skip node 3 ]
+node-type: func [ node ] [ first node ]
+node-fulltext: func [ node ] [ second node ]
+node-attrs: func [ node ] [ any [ third node copy [] ] ]
+node-children: func [ node ] [ skip node 3 ]
 
 nodes-by-type: func [ type nodes ] [ 
-    remove-each node nodes [ not = type node-type? node ] 
+    remove-each node nodes [ not = type node-type node ] 
 ]
 
-node-attr: func [ node attr ] [ select node-attrs? node attr ]
+node-attr: func [ node attr ] [ select node-attrs node attr ]
 
 ;;;
 ;;; link-node interface
@@ -106,10 +106,10 @@ parse-raw-link: func [
 
 parse-internal-link: func [ rawlink link-text link-target ] [
     compose/deep [ 
-        internal-link (rejoin [ "*" meta-to-esc rawlink "*" ]) [ 
-            link-text (attempt [ meta-to-plain link-text ]) 
-            link-target (meta-to-plain link-target) 
-        ]
+        internal-link 
+        (rejoin [ "*" meta-to-esc rawlink "*" ]) 
+        [ link-target (meta-to-plain link-target) ]
+        (any [ attempt [ meta-to-plain link-text ] [] ]) 
     ]
 ]
 
@@ -123,12 +123,14 @@ parse-external-link: func [
     ]
 
     compose/deep [ 
-        external-link (rejoin [ "*" meta-to-esc rawlink "*" ]) [
-            link-text (attempt [ meta-to-plain link-text ])
+        external-link 
+        (rejoin [ "*" meta-to-esc rawlink "*" ]) 
+        [
             link-target (meta-to-plain link-target)
             pre-colon (meta-to-plain pre-colon)
             post-colon (meta-to-plain post-colon)
             post-slashes (attempt [ meta-to-plain post-slashes ])
         ]
+        (any [ attempt [ meta-to-plain link-text ] [] ])
     ]
 ]
