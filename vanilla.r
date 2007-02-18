@@ -6,7 +6,7 @@ REBOL [
     Version:	
 		0.6.3
 	Date:
-		2007-01-14
+		2007-02-16
 
 	Rights: {
 		Copyright (C) 2000-2007 Andreas Bolka, Christian Langreiter
@@ -116,6 +116,8 @@ REBOL [
 ; 2007-01-12            earl: removed unused vanilla-link-rules
 ; 2007-01-13            earl: cgi check for easier wrapping of vanilla.r
 ; 2007-01-14            earl: alias linking
+; 2007-02-16            earl: adapted version numbers, dates
+; 2007-02-18            earl: removed umlaut escaping (was bugged for links)
 ;
 ; =============================================================================
 
@@ -232,7 +234,7 @@ set-default 'vanilla-store-url		rejoin [ vanilla-get-url "?selector=store&snip="
 ; ".xxx" snips are metadata attributes of a snip (like .name, .author, etc.)
 
 internal-snips: reduce [
-	"script-version"		0.6.2
+	"script-version"		0.6.3
 	"script-name"			script-name
 	"now"					now
 	"space-id"				vanilla-space-identifier
@@ -347,16 +349,6 @@ html-format-bold: func [snip] [
 	]
 ]
 
-html-fixup-umlauts: func [snip] [
-	replace/case/all snip "ä" "&auml;"
-	replace/case/all snip "ö" "&ouml;"
-	replace/case/all snip "ü" "&uuml;"
-	replace/case/all snip "Ä" "&Auml;"
-	replace/case/all snip "Ö" "&Ouml;"
-	replace/case/all snip "Ü" "&Uuml;"
-    snip
-]
-
 html-escape-newlines: func [snip] [
 	replace/all snip (esc-to-meta join "\" newline) ""
 	replace/all snip (esc-to-meta join "\" crlf) ""
@@ -370,7 +362,6 @@ html-format: func [snip] [
 	html-escape-newlines snip
 	html-format-breaks snip       
 	html-format-bold snip
-	html-fixup-umlauts snip
 	snip: meta-to-esc snip
 
 	html-format-links snip      ; ... som-based formatting (which is esc-aware)
@@ -693,7 +684,7 @@ handle: func [params] [
 				]
 			]
 		]
-	]
+]
 
 init-vanilla-user: has [ userid valikey ] [ 
 	user: none
