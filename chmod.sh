@@ -5,9 +5,7 @@ chmod 705 apps/
 chmod 701 db/
 chmod 701 lib/
 chmod 707 space/
-
 chmod 705 vanilla.r
-chmod 604 vanilla.r.conf
 
 # apps/
 find apps/ -type d -exec chmod 705 \{} \;
