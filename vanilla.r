@@ -217,6 +217,7 @@ do load to-file rejoin [ lib-dir userdb-accessor ".r" ]
 do load to-file rejoin [ lib-dir sessiondb-accessor ".r" ]
 
 ; set default config vals
+set-default 'vanilla-space-identifier copy "."
 set-default	'vanilla-cookie-prefix	copy ""
 set-default	'vanilla-start-snip		copy "start"
 
@@ -237,7 +238,6 @@ internal-snips: reduce [
 	"script-version"		0.6.3
 	"script-name"			script-name
 	"now"					now
-	"space-id"				vanilla-space-identifier
 	"resource-dir"			resource-dir
 	"resource-url"			resource-url
 
