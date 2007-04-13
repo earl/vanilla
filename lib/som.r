@@ -1,5 +1,4 @@
 REBOL [ title: "vanilla snip object model" ] ; aka snipjects aka sniplib
-; $Id $
 
 ;;;
 ;;; som interface (preliminary!)
