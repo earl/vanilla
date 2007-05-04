@@ -118,6 +118,7 @@ REBOL [
 ; 2007-01-14            earl: alias linking
 ; 2007-02-16            earl: adapted version numbers, dates
 ; 2007-02-18            earl: removed umlaut escaping (was bugged for links)
+; 2007-05-04            earl: fixed permissions stuff, added italics formatting
 ;
 ; =============================================================================
 
@@ -338,15 +339,27 @@ render-external-link: func [link rules] [
     ]
 ]
 
-html-format-bold: func [snip] [
-	span-rule: [thru "__" copy span to "__"]
-	forever [
-		span: none
-		parse snip span-rule
-		either span = none
-			[return snip]
-			[replace snip rejoin ["__" span "__"] rejoin ["<b>" span "</b>"]]
-	]
+format-markup: func [snipdata source-begin source-end target-begin target-end /local p0 p1 t] [
+    parse/all snipdata [ 
+        any [
+            to source-begin p0: thru source-begin 
+            copy span 
+            to source-end thru source-end p1: 
+            (
+                remove/part p0 p1 
+                insert p0 rejoin [ target-begin span target-end ]
+            ) 
+        ] 
+    ]
+    snipdata
+]
+
+html-format-bold: func [snipdata] [
+    format-markup snipdata "__" "__" "<b>" "</b>"
+]
+
+html-format-italic: func [snipdata] [
+    format-markup snipdata "~~" "~~" "<i>" "</i>"
 ]
 
 html-escape-newlines: func [snip] [
@@ -362,6 +375,7 @@ html-format: func [snip] [
 	html-escape-newlines snip
 	html-format-breaks snip       
 	html-format-bold snip
+	html-format-italic snip
 	snip: meta-to-esc snip
 
 	html-format-links snip      ; ... som-based formatting (which is esc-aware)
@@ -544,7 +558,10 @@ eval-p: func [mode class request-class snip /local always-visible-snips] [
 	always-visible-snips: [
 		"vanilla-user-register" "vanilla-user-register-do" 
 		"vanilla-user-login" "vanilla-user-logged-out" "vanilla-user-login-failure"
+		"vanilla-user-disabled"
 		"vanilla-user-please-login"
+		"vanilla-user-wait-for-association"
+		"vanilla-user-editing-disallowed"
 	]
 	if = class 'edit [always-visible-snips: []]
 	return ((= vanilla-space-mode mode) and (= class request-class) and (none? find always-visible-snips snip))
