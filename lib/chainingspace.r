@@ -128,13 +128,13 @@ space-delete: func [ name /local fname ] [
 	fname: to-file join (first space-params) (url-encode name)
 	if not any [
 		(exists? join fname ".snip")
-		(exists? join fname ".meta")
+		(exists? join fname ".metadata")
 	] [ 
 		return false
 	]
 
 	if exists? join fname ".snip" [ delete join fname ".snip" ]
-	if exists? join fname ".meta" [ delete join fname ".meta" ]
+	if exists? join fname ".metadata" [ delete join fname ".metadata" ]
 
 	true
 ]
