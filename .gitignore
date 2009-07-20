@@ -1,0 +1,4 @@
+db/session/*
+db/user/*
+space/*.snip
+space/*.metadata
