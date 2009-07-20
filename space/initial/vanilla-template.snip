@@ -1,59 +1,50 @@
 <html>
-	<head>
+    <head>
 	<title>{.html-name}</title>
-	</head>
-	<body link="#6080A0" vlink="#6080A0" alink="#6080A0">
-	<table cellspacing="0" cellpadding="1" border="0" width="100%">
-		<tr><td bgcolor="#aaaaaa">
-		<table cellpadding="2" cellspacing="0" border="0" width="100%">
-			<tr><td bgcolor="#6080A0" width="25%">
-			<span style="color:white;"><font face="Verdana, Helvetica" size="-1"><b>&nbsp;</b></font></span>
-			</td><td bgcolor="#A8B8D0" align="right">
-			<span style="color:white;"><font face="Verdana, Helvetica" size="-2"><b>
-				<a href="{vanilla-display-url}start" class="nav">start</a> | 
-				<a href="{vanilla-display-url}index" class="nav">index</a> |
-				{!logio} |
-				<a href="{vanilla-display-url}find" class="nav">find</a> | 
-				<a href="{vanilla-edit-url}{.url-name}" class="nav">edit</a> 
-				</b></font></span>
-			</td></tr>
-		</table>
-		<table cellpadding="20" cellspacing="0" border="0" width="100%">
-			<tr><td bgcolor="#F0F0F0" width="25%" align="right" valign="top">
-				<span style="color:white;"><font face="Verdana, Helvetica" size="-2">
-				<span style="color:black;">
-				Online for {!stats.online-for} days. <br> <br>
-				{vanilla-goto-form}{!du-jour.today-button}
-				<b>{!du-jour.calendar-month-line}</b></span>
-				<br><br>
-				{!du-jour.calendar}
-				<br>
-				{!sidebox.backlinks}<br><br><br>
-				<span style="color:black;">
-				{!sidebox.active-users:<br>}</span>
-				</font></span>
-			</td><td bgcolor="#F8F8F8" valign="top">
-				<span style="color:black;"><font face="Verdana, Helvetica" size="-1">
-				<font size="+1"><b>{!hierarchy.display-path}{.html-name}</b></font> <small><br>
-				by <b>{!last-editor:linked},</b> {!age} ago </small><br><br>
-				[snip-content]
-				<br />
-				{!attach.list}
-				</font></span>
-			</td></tr>
-		</table>
-		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-			<tr>
-				<td bgcolor="#F0F0F0" width="25%">&nbsp;</td>
-				<td bgcolor="#F8F8F8" valign="top" width="50%">&nbsp;</td>
-				<td bgcolor="#FFFFFF" align="center">
-					<font face="Verdana, Helvetica" size="-2">
-					c'est un <b><a href="http://www.vanillasite.at/">vanilla</a> </b> site 
-					</font>
-				</td>
-			</tr>
-		</table>
-		</td></tr>
+	<link rel="stylesheet" type="text/css" title="stylesheet" href="{resource-url}vanilla.css" />
+    </head>
+    <body>
+	<table id="tmain" cellpadding="0" cellspacing="0">
+	    <tr>
+		<td id="td11">&nbsp;</td>
+		<td id="td12">
+		    <a href="{vanilla-display-url}start" class="nav">start</a> | 
+		    <a href="{vanilla-display-url}index" class="nav">index</a> |
+		    {!logio} |
+		    <a href="{vanilla-display-url}find" class="nav">find</a> | 
+		    <a href="{vanilla-edit-url}{.url-name}" class="nav">edit</a> 
+		</td>
+	    </tr> <tr>
+		<td id="td21">
+		    Online for {!stats.online-for} days. 
+		    <br><br>
+		    {vanilla-goto-form}{!du-jour.today-button}
+		    <br><b>sticky snips:</b><br><br>
+		    {!sidebox.sticky}
+		    <br><br>
+		    {!sidebox.backlinks}<br>
+		    <br><br>
+		    {!sidebox.active-users:<br>}
+		</td> 
+		<td id="td22">
+		    <span class="sniptitle">{!hierarchy.display-path}{.html-name}</span>
+			<sup>{!sticky}</sup><br>
+		    <span class="snipinfo">by <b>{!last-editor:linked},</b> {!age} ago</span><br>
+		    <br>
+		    <span class="snipcontent">[snip-content]</span><br>
+		    <br>
+		    {!include-if:vanilla-comments;????-??-??*}
+		    {!attach.list}
+		</td>
+	    </tr> <tr>
+		<td id="td31">&nbsp;</td>
+		<td id="td32">
+		    <span id="brand">
+			c'est un <b><a href="http://www.vanillasite.at/">vanilla</a></b> site
+		    </span>
+		</td>
+	    </tr>
 	</table>
-	</body>
+    </body>
 </html>
+<!-- vim: set syn=html sts=4 ts=8 sw=4: -->

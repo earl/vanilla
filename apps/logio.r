@@ -3,29 +3,22 @@
 ;		* display-url
 ; 2001-12-09	earl
 ;		* reg + redirect
+; 2004-01-09	johannes lerch (v++)
+;		* redesigned to templating
+; 2004-07-17	earl
 
 make object!  [
-	doc: "login/logout links"
-	handle: func [/local admin] [
-		either (= user none) [
-        	return rejoin [
-				{<a href="} vanilla-display-url {vanilla-user-login&redirect-to={.name}">login</a> or }
-				{<a href="} vanilla-display-url {vanilla-user-register&redirect-to={.name}">register</a>}
-				]
-			] [
-			either users-is-associate? user [
-				admin: rejoin [ {<a href="} vanilla-display-url {vanilla-user-admin-associate">admin</a> or } ]
-				] [
-				admin: ""
-				]
-			if users-is-master? user [
-				admin: rejoin [ {<a href="} vanilla-display-url {vanilla-user-admin-master">admin</a> or } ]
-				]
-			return rejoin [
-				user/get 'name ", "
-				{<a href="} vanilla-display-url {vanilla-user-preferences">prefs</a>, }
-				admin
-				{<a href="{vanilla-get-url}?selector=user-logout">logout</a>}]
-			]
-		]
-	]
+
+    handle: func [ /local uname ] [
+	if none? user [ return space-expand space-get "template-logio-anon" ]
+
+	either users-is-master? user 
+	    [ templ: "template-logio-master" ]
+	    [ either users-is-associate? user 
+		[ templ: "template-logio-assoc" ]
+		[ templ: "template-logio-user" ] ]
+
+	return replace (space-expand space-get templ) "[user]" (user/get 'name)
+    ]
+
+]

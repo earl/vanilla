@@ -126,20 +126,14 @@ make object! [
 
     ; ---
     
-    ; version 2003-02-22 
+    ; version 2003-09-12 
     decode-multipart-form-data: func [
 	p-content-type 
 	p-post-data 
-	/fallback
 	/local list ct bd delim-beg delim-end non-cr non-lf non-crlf mime-part
     ] [
-	if not found? find p-content-type "multipart/form-data" [ 
-	    either fallback
-		[ return decode-cgi p-post-data ]
-		[ return copy [] ]
-	]
-
 	list: copy []
+	if not found? find p-content-type "multipart/form-data" [ return list ]
 
 	ct: copy p-content-type
 	bd: join "--" copy find/tail ct "boundary="
@@ -160,19 +154,29 @@ make object! [
 	    ( handle-mime-part ct-dispo ct-type content )
 	]
 
-	handle-mime-part: func [ p-ct-dispo p-ct-type p-content /local tmp ] [
+	handle-mime-part: func [ 
+	    p-ct-dispo 
+	    p-ct-type 
+	    p-content 
+	    /local tmp name value val-p 
+	] [
 	    p-ct-dispo: parse p-ct-dispo {;="}
 
-	    append list to-set-word (select p-ct-dispo "name")
-	    either (none? tmp: select p-ct-dispo "filename") and (found? find p-ct-type "text/plain") [
-		append list content
+	    name: to-set-word (select p-ct-dispo "name")
+	    either (none? tmp: select p-ct-dispo "filename")
+		   and (found? find p-ct-type "text/plain") [
+		value: content
 	    ] [
-		append list make object! [
+		value: make object! [
 		    filename: copy tmp
 		    type: copy p-ct-type
 		    content: either none? p-content [ none ] [ copy p-content ]
 		]
 	    ]
+
+	    either val-p: find list name 
+		[ change/only next val-p compose [ (first next val-p) (value) ] ]
+		[ append list compose [ (to-set-word name) (value) ] ]
 	]
 
 	use [ ct-dispo ct-type content ] [

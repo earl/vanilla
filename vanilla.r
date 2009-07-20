@@ -4,9 +4,9 @@ REBOL [
     Authors:	
 		[ "Christian Langreiter" "Andreas Bolka" ]
     Version:	
-		0.6.1
+		0.6.2
 	Date:
-		2004-01-08
+		2004-11-07
 
 	Rights: {
 		Copyright (C) 2000-2004 Andreas Bolka, Christian Langreiter
@@ -14,7 +14,7 @@ REBOL [
 	}
 ]
 
-; $Id: vanilla.r,v 1.5 2004/02/08 17:50:34 earl Exp $
+; $Id: vanilla.r,v 1.10 2004/11/11 14:38:22 earl Exp $
 ; =============================================================================
 ;
 ; 2000-02-11 	0.0.1i	started as "prototypical vanilla rewrite in REBOL"
@@ -103,6 +103,13 @@ REBOL [
 ;						- removed vanilla-html-link-prefix
 ;						- prepared for release as 0.6.0
 ; 2004-01-08			prepared 0.6.1
+; 2004-05-07			earl: incorporated set-cookie param reordering (thanks Luke!)
+; 2004-07-03			earl:
+;						- added first-store-date meta
+;						- removed dns lookup for last-store-addr meta
+; 2004-07-07			earl: added sniptag support
+; 2004-11-07			prepared 0.6.2
+; 2004-11-11			fixed cookie bug introduced by "lynx fix"
 ;
 ; =============================================================================
 
@@ -156,11 +163,17 @@ get-cookie: func [ name /unprefixed ] [
 	select (parse get-cookies-raw "; =") name
 ]
 
-set-cookie: func [ key value path expires /unprefixed ] [
+set-cookie: func [ key value path expires /unprefixed /local s ] [
 	; if called w/o /unprefixed refinement then prefix!
 	if none? unprefixed [ insert key vanilla-cookie-prefix ]
 
-	print rejoin ["Set-Cookie: " key "=" value "; " "path=" path "; expires=" expires]
+	s: rejoin [ "Set-Cookie: " key "=" value "; " ]
+	if not empty? expires [
+		append s rejoin [ "expires=" expires "; " ]
+	]
+	append s rejoin [ "path=" path ";" ]
+
+	print s
 ]
 
 textheader:	"Content-Type: text/plain^/"
@@ -212,7 +225,7 @@ set-default 'vanilla-store-url		rejoin [ vanilla-get-url "?selector=store&snip="
 ; ".xxx" snips are metadata attributes of a snip (like .name, .author, etc.)
 
 internal-snips: reduce [
-	"script-version"		0.6.1
+	"script-version"		0.6.2
 	"script-name"			script-name
 	"now"					now
 	"space-id"				vanilla-space-identifier
@@ -419,21 +432,26 @@ edit: func [snipname /local htmlname snip edit-ct edit-form] [
 	replace/all edit-ct "&" "&amp;"
 	replace/all edit-ct "<" "&lt;"
 	replace/all edit-ct ">" "&gt;"
-	edit-form: replace 
-	  	(space-expand space-get "vanilla-edit-form-template") 
-	  	"[snip-content-for-editing]" 
-	  	rejoin [ newline edit-ct ]
+
+	edit-form: space-expand space-get "vanilla-edit-form-template"
+	replace/all edit-form "[snip-content-for-editing]" rejoin [ newline edit-ct ]
+	replace/all edit-form "[snip-tags]" any [ (space-meta-get snipname "tags") (copy "") ]
+
 	print replace (space-expand space-get "vanilla-template") "[snip-content]" edit-form 
 ]
 
-store-raw: func [snipname snipdata /local resolved-remote snip-at-hand uid] [
+store-raw: func [snipname snipdata /local resolved-remote snip-at-hand uid t0] [
+	t0: now
+
 	replace/all snipdata crlf newline
 	space-store snipname snipdata
 
-	resolved-remote: read to-url rejoin ["dns://" system/options/cgi/remote-addr]
+	space-meta-set snipname "last-store-date" t0
+	space-meta-set snipname "last-store-addr" system/options/cgi/remote-addr
 
-	space-meta-set snipname "last-store-date" now
-	space-meta-set snipname "last-store-addr" resolved-remote
+	; first-store-date
+	if none? space-meta-get snipname "first-store-date"
+		[ space-meta-set snipname "first-store-date" t0 ]
 
 	uid: either (not = none user) [ user/get 'id ] [ none ] 
 	; last-editor
@@ -459,11 +477,12 @@ update-recent-stores: func [ snipname ] [
 	space-store odb mold l
 ]
 
-store: func [snipname snipdata] [
+store: func [snipname snipdata sniptags] [
 	if = snipname "" [ http-redir rejoin [ vanilla-display-url "vanilla-store-error" ] ]
 	purge-backlinks-for snipname
 	store-raw snipname snipdata
 	create-backlinks-for snipname
+	space-meta-set snipname "tags" sniptags
 
 	update-recent-stores snipname
 
@@ -619,7 +638,7 @@ handle: func [params] [
 				]
 			"store" [
 				permissions-ok? 'edit snip
-				store snip snip-content
+				store snip snip-content snip-tags
 				]
 			"delete" [
 				permissions-ok? 'edit snip

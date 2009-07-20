@@ -1,0 +1,69 @@
+			synerge vanilla/R version 0.6.2
+
+  Release Notes
+  -------------
+
+  Vanilla 0.6.2 is - of course and per definition - the most amazing Vanilla
+  ever, but still you might wonder: What, exactly, is supposed to instill
+  never-ending amazement in you? Well, friend of all things vanilloid, there's
+  an easy answer: Vanilla 0.6.2 brings you a shiny new weblogging
+  infrastructure that boldly calls itself "du-jour deux" (dj2).
+
+  Du-jour deux continues to support the traditional "one piece a day"-style but
+  also features a "multiple items per day" mode. Yeah, we can hear the sighs of
+  relief of you Movable Type/Wordpress/Antville/etc.  Vanilla-users-to-be, your
+  favourite blogging style is now supported by your favourite bliki!
+  Furthermore, the comment system has been cleaned up (no more comments-* snips;
+  comments wherever you want them, not only in the weblog) and the whole du-jour
+  infrastructure is easily templatable - just have a look at all those
+  template-* snips.
+
+  In the cool shadow of the grand tree which calls itself du-jour deux two 
+  more jewels are to be found: a note-desktop application (for those of you who,
+  like me, like the look of all those iconised .txt files on their desktop) and
+  "sticky" snips, an easy way to add/remove snips to/from the sidebar - formerly
+  known as "vanilla long-term memory".
+
+  Various other bits and pieces have been cleaned up; even a few bugs have been
+  squashed. Let me finish with mentioning an apparently minor new
+  infrastructural feature which may well make a very high impact for custom
+  development - it's simply called "snip tags". You always wanted to have
+  categories, keywords, you name it? With snip tags you can easily develop a
+  system that exactly fits your needs. No, we don't provide any applications
+  that work on those tags right now: Surprise us with your creativity!
+
+  Du-jour deux, sticky and the note-desktop are based on work done as part of a
+  student project by Johannes Lerch, Csaba Burus and Bernhard Schuller under
+  supervision of Andreas Bolka and Johann Grabner, sponsored by synerge
+  digitality. We want to thank the team members for their efforts!
+
+  Finally, as always: Enjoy!
+
+  Andreas Bolka, Christian Langreiter; 2004-11-09
+
+
+  Change Log
+  ----------
+
+  core
+  - added support for "snip tags"
+  - removed dns lookup for last-store-addr
+  - set-cookie params reordered
+
+  dynas:
+  - dj2: the next generation of du-jour, supports day-based and item-based
+    blogging. improved comment system (no comments-* snips anymore).
+  - added the "sticky" suite (sticky, sidebox.sticky)
+  - added note-desktop
+  - logio: rewritten to use templates
+
+  libs:
+  - upgraded to recent decode-multipart-form-data
+  - upgraded to recent string-tools
+
+  misc
+  - vanilla-template: cleaned up, added stylesheet (vanilla.css)
+  - vanilla-template: uses dj2, sticky support, no calendar anymore
+  - added templates for dj2, comments, logio and note-desktop
+  - added snip.png for note-desktop
+

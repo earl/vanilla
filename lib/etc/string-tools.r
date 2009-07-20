@@ -1,14 +1,19 @@
 REBOL [
     Title:
-	"vanilla version of strain://rebol/string-tools"
+	"strain://rebol/string-tools"
+    Purpose:
+	"Additional string manipulation functions"
     Authors:
 	[ "Andreas Bolka" ]
+    Contributos:
+	[ ]
     Date:
-	2003-07-27
+	2004-04-16
     History: [ 
 	2002-12-23	"Initial version as strlib.r" 
 	2003-03-14	"Renamed to string-tools.r"
-	2003-07-27	"Added to vanilla, removed 'expand function"
+	2004-04-05	"Fixed nasty bug in ends-with?"
+	2004-04-16	"Renamed 'expand to 'rejoin-with"
     ]
 ]
 
@@ -17,8 +22,7 @@ begins-with?: func [
     string [any-string!]
     pattern [any-string!] 
 ] [
-    ; for the sake of efficiency, leave out the "not none?"
-    find/part string pattern length? pattern
+    = pattern copy/part string length? pattern
 ]
 
 ends-with?: func [ 
@@ -26,8 +30,7 @@ ends-with?: func [
     string [any-string!]
     pattern [any-string!]
 ] [
-    ; for the sake of efficiency, leave out the "not none?"
-    find/reverse/part tail string pattern length? pattern
+    = pattern skip tail string -1 * (length? pattern)
 ]
 
 split: func [
@@ -45,4 +48,18 @@ split: func [
     ]
     insert tail tokens copy string
     tokens
+]
+
+rejoin-with: func [ 
+    "Rejoins a block of tokens and seperates them by the given delimiter."
+    tokens [block!]
+    delim [any-string!]
+    /local res token 
+] [
+    res: make block! (2 * length? tokens)
+    repeat token tokens [ 
+	repend res [ token delim ] 
+    ]
+    remove back tail res
+    rejoin res
 ]

@@ -1,10 +1,14 @@
 <form method=POST action="{vanilla-post-url}">
-snip title:<br>
 <input type="hidden" name="selector" value="store">
-<input name="snip" size="40" value="{.html-name}"><br>
-content:<br>
-<textarea name="snip-content" rows="20" cols="70" wrap="virtual">[snip-content-for-editing]</textarea><br><br>
-<input type="submit" value="Store!">
+<table style="font-size:10pt;"> 
+<tr> <td width="50%"> snip title: </td> 
+     <td width="50%"> snip tags: </td> </tr>
+<tr> <td> <input name="snip" size="40" value="{.html-name}"> </td>
+     <td> <input name="snip-tags" size="40" value="[snip-tags]" /> </td> </tr>
+<tr> <td colspan="2"> content: </td> </tr>
+<tr> <td colspan="2"> 
+	  <textarea name="snip-content" rows="20" cols="70" wrap="virtual">[snip-content-for-editing]</textarea> </td> </tr>
+<tr> <td colspan="2"> 
+	  <input type="submit" value="Store!"> </td> </tr>
+</table>
 </form>
-select parent: 
-{!hierarchy.potential-parents}
