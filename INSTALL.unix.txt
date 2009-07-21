@@ -3,7 +3,7 @@
 
  - This installation guide assumes that you have the Apache HTTPD webserver
    installed.
- 
+
  - Extract the Vanilla unix distribution (vanilla-x.y.z.tar.gz) to a directory
    of your choice (e.g. /usr/local/vanilla/).
 
@@ -22,13 +22,13 @@
    point to your REBOL/Core executable (e.g. change it to
    #!/usr/local/bin/rebol042 -cs)
 
- - Execute chmod.sh in your vanilla root (e.g. 
+ - Execute chmod.sh in your vanilla root (e.g.
    $ cd /usr/local/vanilla
    $ ./chmod.sh)
 
  - You're almost done! Edit vanilla.cgi.conf and adapt at least
-   "vanilla-space-identifier" and "vanilla-root". 
-   
+   "vanilla-space-identifier" and "vanilla-root".
+
    - Use some random string as "vanilla-space-identifier", for example the
      current date and time (e.g. vanilla-space-identifier: "2003-09-22 01:51").
 

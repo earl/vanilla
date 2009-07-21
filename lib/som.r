@@ -20,8 +20,8 @@ node-fulltext: func [ node ] [ second node ]
 node-attrs: func [ node ] [ any [ third node copy [] ] ]
 node-children: func [ node ] [ skip node 3 ]
 
-nodes-by-type: func [ type nodes ] [ 
-    remove-each node nodes [ not = type node-type node ] 
+nodes-by-type: func [ type nodes ] [
+    remove-each node nodes [ not = type node-type node ]
 ]
 
 node-attr: func [ node attr ] [ select node-attrs node attr ]
@@ -77,15 +77,15 @@ backlinks-for: func [ snipname ] [
 raw-links-in: func [ snipdata /local link ] [
     collect 'emit [
         parse esc-to-meta snipdata [
-            any [ 
+            any [
                 thru "*" copy link to "*" thru "*" (if link [ emit link ])
             ]
         ]
     ]
 ]
 
-parse-raw-link: func [ 
-    rawlink 
+parse-raw-link: func [
+    rawlink
     /local prefixes rules link-text link-target link-prefix
 ] [
     parse rawlink [
@@ -97,33 +97,33 @@ parse-raw-link: func [
     prefix: find link-target ":"
 
     either all [ prefix (find prefixes copy/part link-target prefix) ] [
-        parse-external-link rawlink link-text link-target 
+        parse-external-link rawlink link-text link-target
     ] [
         parse-internal-link rawlink link-text link-target
     ]
 ]
 
 parse-internal-link: func [ rawlink link-text link-target ] [
-    compose/deep [ 
-        internal-link 
-        (rejoin [ "*" meta-to-esc rawlink "*" ]) 
+    compose/deep [
+        internal-link
+        (rejoin [ "*" meta-to-esc rawlink "*" ])
         [ link-target (meta-to-plain link-target) ]
-        (any [ attempt [ meta-to-plain link-text ] [] ]) 
+        (any [ attempt [ meta-to-plain link-text ] [] ])
     ]
 ]
 
-parse-external-link: func [ 
-    rawlink link-text link-target 
-    /local pre-colon post-colon post-slashes 
+parse-external-link: func [
+    rawlink link-text link-target
+    /local pre-colon post-colon post-slashes
 ] [
     parse link-target [
         copy pre-colon to ":" thru ":"
         copy post-colon [ thru "//" copy post-slashes to end | to end ]
     ]
 
-    compose/deep [ 
-        external-link 
-        (rejoin [ "*" meta-to-esc rawlink "*" ]) 
+    compose/deep [
+        external-link
+        (rejoin [ "*" meta-to-esc rawlink "*" ])
         [
             link-target (meta-to-plain link-target)
             pre-colon (meta-to-plain pre-colon)

@@ -1,4 +1,4 @@
-			synerge vanilla/R version 0.6.2
+                        synerge vanilla/R version 0.6.2
 
   Release Notes
   -------------
@@ -18,7 +18,7 @@
   infrastructure is easily templatable - just have a look at all those
   template-* snips.
 
-  In the cool shadow of the grand tree which calls itself du-jour deux two 
+  In the cool shadow of the grand tree which calls itself du-jour deux two
   more jewels are to be found: a note-desktop application (for those of you who,
   like me, like the look of all those iconised .txt files on their desktop) and
   "sticky" snips, an easy way to add/remove snips to/from the sidebar - formerly

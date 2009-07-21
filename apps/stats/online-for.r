@@ -6,7 +6,7 @@ make object! [
     odb-name: "appdata-online-for"
 
     handle: func [ ] [
-	if not space-exists? odb-name [ space-store odb-name mold now ]
-	now - (load space-get odb-name)
+        if not space-exists? odb-name [ space-store odb-name mold now ]
+        now - (load space-get odb-name)
     ]
 ]

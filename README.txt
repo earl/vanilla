@@ -1,15 +1,15 @@
-			       synerge vanilla/R
+                               synerge vanilla/R
 
   Copyright (C) 2000-2004 by Andreas Bolka, Christian Langreiter
-  Licensed under the Academic Free License version 2.0. 
+  Licensed under the Academic Free License version 2.0.
 
 
   What is it?
   -----------
 
   Vanilla is a simple, extensible hypertext system and framework for developing
-  simple web-applications. 
-  
+  simple web-applications.
+
   Vanilla's conceptual roots lie in Ward Cunningham's WikiWikiWeb, an idea
   Vanilla fully embraced.
 
@@ -29,7 +29,7 @@
   INSTALL.win32.txt, respectively.
 
 
-  Licensing 
+  Licensing
   ---------
 
   Vanilla is licensed under the terms of the Academic Free License version 2.0.

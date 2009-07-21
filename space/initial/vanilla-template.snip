@@ -1,50 +1,50 @@
 <html>
     <head>
-	<title>{.html-name}</title>
-	<link rel="stylesheet" type="text/css" title="stylesheet" href="{resource-url}vanilla.css" />
+        <title>{.html-name}</title>
+        <link rel="stylesheet" type="text/css" title="stylesheet" href="{resource-url}vanilla.css" />
     </head>
     <body>
-	<table id="tmain" cellpadding="0" cellspacing="0">
-	    <tr>
-		<td id="td11">&nbsp;</td>
-		<td id="td12">
-		    <a href="{vanilla-display-url}start" class="nav">start</a> | 
-		    <a href="{vanilla-display-url}index" class="nav">index</a> |
-		    {!logio} |
-		    <a href="{vanilla-display-url}find" class="nav">find</a> | 
-		    <a href="{vanilla-edit-url}{.url-name}" class="nav">edit</a> 
-		</td>
-	    </tr> <tr>
-		<td id="td21">
-		    Online for {!stats.online-for} days. 
-		    <br><br>
-		    {vanilla-goto-form}{!du-jour.today-button}
-		    <br><b>sticky snips:</b><br><br>
-		    {!sidebox.sticky}
-		    <br><br>
-		    {!sidebox.backlinks}<br>
-		    <br><br>
-		    {!sidebox.active-users:<br>}
-		</td> 
-		<td id="td22">
-		    <span class="sniptitle">{!hierarchy.display-path}{.html-name}</span>
-			<sup>{!sticky}</sup><br>
-		    <span class="snipinfo">by <b>{!last-editor:linked},</b> {!age} ago</span><br>
-		    <br>
-		    <span class="snipcontent">[snip-content]</span><br>
-		    <br>
-		    {!include-if:vanilla-comments;????-??-??*}
-		    {!attach.list}
-		</td>
-	    </tr> <tr>
-		<td id="td31">&nbsp;</td>
-		<td id="td32">
-		    <span id="brand">
-			c'est un <b><a href="http://www.vanillasite.at/">vanilla</a></b> site
-		    </span>
-		</td>
-	    </tr>
-	</table>
+        <table id="tmain" cellpadding="0" cellspacing="0">
+            <tr>
+                <td id="td11">&nbsp;</td>
+                <td id="td12">
+                    <a href="{vanilla-display-url}start" class="nav">start</a> |
+                    <a href="{vanilla-display-url}index" class="nav">index</a> |
+                    {!logio} |
+                    <a href="{vanilla-display-url}find" class="nav">find</a> |
+                    <a href="{vanilla-edit-url}{.url-name}" class="nav">edit</a>
+                </td>
+            </tr> <tr>
+                <td id="td21">
+                    Online for {!stats.online-for} days.
+                    <br><br>
+                    {vanilla-goto-form}{!du-jour.today-button}
+                    <br><b>sticky snips:</b><br><br>
+                    {!sidebox.sticky}
+                    <br><br>
+                    {!sidebox.backlinks}<br>
+                    <br><br>
+                    {!sidebox.active-users:<br>}
+                </td>
+                <td id="td22">
+                    <span class="sniptitle">{!hierarchy.display-path}{.html-name}</span>
+                        <sup>{!sticky}</sup><br>
+                    <span class="snipinfo">by <b>{!last-editor:linked},</b> {!age} ago</span><br>
+                    <br>
+                    <span class="snipcontent">[snip-content]</span><br>
+                    <br>
+                    {!include-if:vanilla-comments;????-??-??*}
+                    {!attach.list}
+                </td>
+            </tr> <tr>
+                <td id="td31">&nbsp;</td>
+                <td id="td32">
+                    <span id="brand">
+                        c'est un <b><a href="http://www.vanillasite.at/">vanilla</a></b> site
+                    </span>
+                </td>
+            </tr>
+        </table>
     </body>
 </html>
 <!-- vim: set syn=html sts=4 ts=8 sw=4: -->

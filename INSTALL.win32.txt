@@ -1,5 +1,5 @@
 
-	     synerge vanilla/R - Quick Installation Guide for Win32
+             synerge vanilla/R - Quick Installation Guide for Win32
 
  - Extract the Vanilla win32 distribution (vanilla-x.y.z.zip) to a directory of
    your choice (e.g. C:\vanilla\)
@@ -26,8 +26,8 @@
    #!c:\vanilla\rebol031.exe -cs).
 
  - You're almost done! Edit vanilla.cgi.conf and adapt at least
-   "vanilla-space-identifier" and "vanilla-root". 
-   
+   "vanilla-space-identifier" and "vanilla-root".
+
    - Use some random string as "vanilla-space-identifier", for example the
      current date and time (e.g. vanilla-space-identifier: "2003-09-22 01:51").
 
