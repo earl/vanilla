@@ -1,6 +1,4 @@
 REBOL []
-; CVS: $Id: chainingspace.r,v 1.1 2003/09/22 21:46:03 earl Exp $
-;
 ; 2002-04-16    earl
 ;       * created chainingspace as a fork from simplespace with space-chaining support
 ; 2002-04-28    earl

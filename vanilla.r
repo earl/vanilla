@@ -14,7 +14,6 @@ REBOL [
     }
 ]
 
-; $Id: vanilla.r,v 1.10 2004/11/11 14:38:22 earl Exp $
 ; =============================================================================
 ;
 ; 2000-02-11    0.0.1i  started as "prototypical vanilla rewrite in REBOL"
