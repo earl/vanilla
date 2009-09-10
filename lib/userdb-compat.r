@@ -1,3 +1,4 @@
+REBOL []
 
 ;; user-accessor compatibility functions
 

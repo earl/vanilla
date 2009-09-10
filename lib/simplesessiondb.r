@@ -1,3 +1,4 @@
+REBOL []
 ; simplesessiondb.r
 ; 2000-05-31/2000-10-29/2000-11-19
 ; extended for locking, chl 2001-11-08

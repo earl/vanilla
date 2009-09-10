@@ -1,3 +1,4 @@
+REBOL []
 ; simpleuserdb.r
 ; 2000-10-29, 2000-11-20
 ; 2001-06-12    earl
