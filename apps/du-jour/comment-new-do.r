@@ -5,7 +5,7 @@
 make object! [
     doc: "stores a comment"
     handle: func [/local comments] [
-        comments: do load to-file rejoin [ app-dir "du-jour/" "comments.r" ]
+        comments: do load find-file %du-jour/comments.r
 
         ; check - count cmts - store
         if (error? try [comment-content]) [return "__AI detected:__ Factual error in comment!"]

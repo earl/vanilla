@@ -30,8 +30,8 @@ make object! [
         ; two modes: 'individual and 'comments
         ; [date] [ayago] [fulldate] [time] [author] [age] [#comments] [commenters] [comments] [content]
 
-        age: do load to-file join app-dir "age.r"
-        comments: do load to-file rejoin [ app-dir "du-jour/" "comments.r" ]
+        age: do load find-file %age.r
+        comments: do load find-file %du-jour/comments.r
 
         entry-template: space-get "du-jour-entry-template"
         entry-with-comments-template: space-get "du-jour-entry-with-comments-template"

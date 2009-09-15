@@ -86,7 +86,7 @@ make object! [
     ; ---
 
     handle: func [ /local for-snip att-module ] [
-        att-module: do load to-file rejoin [ app-dir self/package-path "lib.r" ]
+        att-module: do load find-file %attach/lib.r
         att-module/template-main: template-main
         att-module/template-entry: template-entry
         att-module/template-noentries: template-noentries

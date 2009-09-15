@@ -16,7 +16,7 @@ make object! [
 
         month-abbrevs: ["jan" "feb" "mar" "apr" "may" "jun" "jul" "aug" "sep" "oct" "nov" "dec"]
 
-        do load to-file rejoin [ app-dir "calendar/" "lib-core.r" ]
+        do load find-file %calendar/lib-core.r
 
         ; calendar-month: any [ attempt [ to-integer calendar-month ] now/month ]
         ; calendar-year: any [ attempt [ to-integer calendar-year ] now/year ]

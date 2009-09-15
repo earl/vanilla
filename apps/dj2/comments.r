@@ -12,7 +12,7 @@ make object! [
     ;   - template-comments-loginfirst
     ;   - template-comments-editlink
 
-    libdj: do load to-file rejoin [ app-dir "dj2/" "libdj2.r" ]
+    libdj: do load find-file %dj2/libdj2.r
 
     get-comments-for: func [ s /local res n c ] [
         res: copy []

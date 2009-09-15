@@ -2,7 +2,7 @@
 REBOL []
 
 context [
-    age: do load to-file join app-dir "age.r"
+    age: do load find-file %age.r
 
     format-date: func [date [date!] /local month-names vdj-nice-date] [
         ; @@ cleanup: load names from snips?

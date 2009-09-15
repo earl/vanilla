@@ -175,21 +175,13 @@ space-dyna-exec: func [name /local temp e calling-path dynasnip-name dynasnip-pa
     temp: parse/all name ":"
     dynasnip-name: temp/1
     dynasnip-params: either found? find name ":" [ at name (length? temp/1) + 2 ] [ none ]
+    ; @@ sanitize so that this cannot escape below vanilla-root
+    dynasnip-path: join to-file replace/all copy dynasnip-name "." "/" %.r
 
-    ;; dyna packages
-    ; v2 following (v1: replace/all dynasnip-name "." "/")
-    temp: parse/all dynasnip-name "."
-    dynasnip-name: last temp
-    reverse temp remove temp reverse temp
-    calling-path: copy ""
-    foreach e temp [ append calling-path join e "/" ]   ; rejoin the parts to build the calling-path
-
-    if error? try [ dyna-object: do load to-file rejoin [app-dir calling-path dynasnip-name ".r"] ] [
-        return rejoin ["__[error loading dynasnip__ from " app-dir calling-path dynasnip-name ".r" "]"]
+    if error? try [ dyna-object: do load find-file dynasnip-path ] [
+        return rejoin ["__[error loading dynasnip__ from " dynasnip-path "__]__"]
         ]
-    ;; refine the dyna-object to pass the relative path to the dyna's package
-    ;; this allows for greater flexibility in package-naming
-    dyna-object: make dyna-object [ package-path: calling-path ]
+
     either error? error: try [hres: dyna-object/handle dynasnip-params] [
         disarm error return mold error
         ] [

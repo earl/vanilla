@@ -15,7 +15,7 @@ make object! [
     format-entry: func [sn mode /local age e tc c current-comment user-ids users commenters template] [
         ; [author] [age] [content] [edit-button]
 
-        age: do load to-file join app-dir %age.r
+        age: do load find-file %age.r
         template: space-get "generic-comment-template"
         e: copy ""
 

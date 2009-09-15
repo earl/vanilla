@@ -24,7 +24,7 @@ make object! [
         target-prefix:      any [ target-prefix "" ]
         target-appendix:    any [ target-appendix "" ]
 
-        do load to-file rejoin [ app-dir "calendar/" "lib-core.r" ]
+        do load find-file %calendar/lib-core.r
 
         res: make string! 256
         cal: make calendar []

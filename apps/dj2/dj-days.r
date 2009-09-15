@@ -3,7 +3,7 @@
 ; 2004-07-02    earl
 
 make object! [
-    libdj: do load to-file rejoin [ app-dir "dj2/" "libdj2.r" ]
+    libdj: do load find-file %dj2/libdj2.r
 
     items: none
     days: none

@@ -6,7 +6,7 @@
 make object! [
     doc: "displays a vanilla-du-jour-integrated calendar"
     handle: func [/local cal entry entries entry-vd] [
-        do load to-file rejoin [ app-dir "du-jour/" "calendar-core.r" ]
+        do load find-file %du-jour/calendar-core.r
 
         res: make string! 256
         cal: make calendar []

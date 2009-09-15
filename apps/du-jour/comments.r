@@ -32,7 +32,7 @@ make object! [
         copy/part r ((length? r) - 2)
         ]
     handle: func [s /local r du-jour] [
-        du-jour: do load to-file rejoin [ app-dir "du-jour/" "du-jour.r" ]
+        du-jour: do load find-file %du-jour/du-jour.r
         r: make string! 1024
         append r du-jour/format-entry to-date s 'comments
         r
