@@ -10,7 +10,7 @@ REBOL [
 ]
 
 ;; debugging support
-if not none? find __cgi: decode-cgi system/options/cgi/query-string to-set-word "debug"
+if not none? find __cgi: decode-cgi any [ system/options/cgi/query-string "" ] to-set-word "debug"
     [ print "Content-type: text/plain^/" ]
 
 ;; vhost support
