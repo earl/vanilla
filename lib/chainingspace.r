@@ -182,10 +182,9 @@ space-dyna-exec: func [name /local temp e calling-path dynasnip-name dynasnip-pa
         return rejoin ["__[error loading dynasnip__ from " dynasnip-path "__]__"]
         ]
 
-    either error? error: try [hres: dyna-object/handle dynasnip-params] [
-        disarm error return mold error
-        ] [
-        hres
+    if error? error: try [return dyna-object/handle dynasnip-params] [
+        print ["-- Dynasnip:" dynasnip-name]
+        error
         ]
     ]
 
