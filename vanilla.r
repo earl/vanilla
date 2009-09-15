@@ -207,14 +207,14 @@ if error? try [ __config-loaded ] [
 ]
 
 ; load internal libs
-do load to-file join lib-dir "secure-hash.r"
-do load to-file join lib-dir "simplemeta.r"
-do load to-file join lib-dir "som.r"
+do load find-file %secure-hash.r
+do load find-file %simplemeta.r
+do load find-file %som.r
 
 ; load pluggable libs
-do load to-file rejoin [ lib-dir space-accessor ".r" ]
-do load to-file rejoin [ lib-dir userdb-accessor ".r" ]
-do load to-file rejoin [ lib-dir sessiondb-accessor ".r" ]
+do load find-file join to-file space-accessor %.r
+do load find-file join to-file userdb-accessor %.r
+do load find-file join to-file sessiondb-accessor %.r
 
 ; set default config vals
 set-default 'vanilla-space-identifier copy "."
@@ -791,10 +791,9 @@ main: does [
 ]
 
 ;; load patches / utilities
-
-do load to-file rejoin [ lib-dir "etc/" %string-tools.r ]
-do load to-file rejoin [ lib-dir "etc/" %decode-cgi.r ]
-do load to-file rejoin [ lib-dir "etc/" %collect.r ]
+do load find-file %etc/string-tools.r
+do load find-file %etc/decode-cgi.r
+do load find-file %etc/collect.r
 
 if system/options/cgi/request-method [
     main

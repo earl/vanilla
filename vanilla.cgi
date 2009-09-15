@@ -23,6 +23,12 @@ either exists? __vhost-conf
 ;; tell vanilla that the config has already been loaded
 __config-loaded: true
 
+;; load and setup our "module manager"
+vanilla-root: to-file vanilla-root
+do load join vanilla-root %lib/etc/find-file.r
+append searchpath join vanilla-root %lib/
+append searchpath join vanilla-root %apps/
+
 ;; load vanilla, restore vanilla's script header
 __script: load/header to-file join vanilla-root "vanilla.r"
 system/script/header: first __script
