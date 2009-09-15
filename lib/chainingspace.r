@@ -170,21 +170,18 @@ system-snip?: func [ snip ] [
     ]
 ]
 
-space-dyna-exec: func [name /local temp e calling-path dynasnip-name dynasnip-params dyna-object] [
-    ;; dyna params splitting
-    temp: parse/all name ":"
-    dynasnip-name: temp/1
-    dynasnip-params: either found? find name ":" [ at name (length? temp/1) + 2 ] [ none ]
+space-dyna-exec: func [call /local name params path dyna err] [
+    parse call [copy name to ":" skip copy params to end | copy name to end]
     ; @@ sanitize so that this cannot escape below vanilla-root
-    dynasnip-path: join to-file replace/all copy dynasnip-name "." "/" %.r
+    path: join to-file replace/all copy name "." "/" %.r
 
-    if error? try [ dyna-object: do load find-file dynasnip-path ] [
-        return rejoin ["__[error loading dynasnip__ from " dynasnip-path "__]__"]
+    if error? try [ dyna: do load find-file path ] [
+        return rejoin ["__[error loading dynasnip__ from " path "__]__"]
         ]
 
-    if error? error: try [return dyna-object/handle dynasnip-params] [
-        print ["-- Dynasnip:" dynasnip-name]
-        error
+    if error? err: try [return dyna/handle params] [
+        print ["-- Dynasnip:" name]
+        err
         ]
     ]
 
