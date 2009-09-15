@@ -170,10 +170,6 @@ system-snip?: func [ snip ] [
     ]
 ]
 
-space-dyna-dir: func [] [
-    read to-file app-dir
-    ]
-
 space-dyna-exec: func [name /local temp e calling-path dynasnip-name dynasnip-params dyna-object] [
     ;; dyna params splitting
     temp: parse/all name ":"
