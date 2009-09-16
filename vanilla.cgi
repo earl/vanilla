@@ -1,27 +1,24 @@
 #!@@path-to-rebol@@ -cs
 
 REBOL [
-    Title:  "vanilla cgi wrapper"
-    Date:   2003-09-22
+    Title:  "Synerge Vanilla/R - CGI Frontend"
+    Date:   2009-09-16
     Rights: {
-        Copyright (C) 2000-2007 Andreas Bolka, Christian Langreiter
+        Copyright (C) 2000-2009 Andreas Bolka, Christian Langreiter
         Licensed under the Academic Free License version 2.0.
     }
 ]
 
 ;; debugging support
-if not none? find __cgi: decode-cgi any [ system/options/cgi/query-string "" ] to-set-word "debug"
+if find decode-cgi any [ system/options/cgi/query-string "" ] to-set-word 'debug
     [ print "Content-type: text/plain^/" ]
 
-;; vhost support
-__vhost-conf: to-file rejoin [ "vanilla.conf-" system/options/cgi/server-name ]
-__script-name: last parse system/options/script "/"
-either exists? __vhost-conf
-    [ do load __vhost-conf ]
-    [ do load to-file join __script-name ".conf" ]
-
-;; tell vanilla that the config has already been loaded
-__config-loaded: true
+;; load params from config file
+use [conf-file] [
+    either exists? conf-file: join %vanilla.conf- system/options/cgi/server-name
+        [ do load conf-file ]
+        [ do load to-file join last parse system/options/script "/" %.conf ]
+]
 
 ;; load and setup our "module manager"
 vanilla-root: to-file vanilla-root
@@ -30,10 +27,11 @@ append searchpath join vanilla-root %lib/
 append searchpath join vanilla-root %apps/
 
 ;; load vanilla, restore vanilla's script header
-__script: load/header find-file %vanilla.r
-system/script/header: first __script
-do next __script
-
+use [script] [
+    script: load/header find-file %vanilla.r
+    system/script/header: first script
+    do next script
+]
 
 ; -------------------
 ; vim: set syn=rebol:

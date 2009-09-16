@@ -122,7 +122,7 @@ REBOL [
 ; =============================================================================
 
 
-if all [ not error? try [ __config-loaded ] (value? 'benchmark) benchmark ] [ __t0: now/time/precise ]
+if attempt [benchmark] [benchmark: now/time/precise]
 
 ; print "Content-type: text/html^/^/"
 ; trace true
@@ -200,11 +200,6 @@ set-default: func [
 
 sys-script-name: system/options/script
 script-name: last parse sys-script-name "/"
-
-; load config
-if error? try [ __config-loaded ] [
-    do load to-file join script-name ".conf"
-]
 
 ; load internal libs
 do load find-file %secure-hash.r
@@ -799,9 +794,6 @@ if system/options/cgi/request-method [
     main
 ]
 
-if all [ not error? try [ __config-loaded ] (value? 'benchmark) benchmark ] [
-    __t1: now/time/precise
-    print rejoin [ "<code> " __t1 - __t0 " </code>" ]
-]
+if attempt [benchmark] [print [<code> now/time/precise - benchmark </code>]]
 
 ; vim: set syn=rebol expandtab sw=4:
