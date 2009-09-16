@@ -27,10 +27,24 @@ append searchpath join vanilla-root %lib/
 append searchpath join vanilla-root %apps/
 
 ;; load vanilla, restore vanilla's script header
-use [script] [
+use [script err] [
     script: load/header find-file %vanilla.r
     system/script/header: first script
-    do next script
+    if error? set/any 'err try [do next script] [
+        print rejoin [
+            "Status: 500 Internal Server Error" newline
+            "Content-type: text/html" newline
+            newline
+            <h1 style="color:red;"> "HTTP 500 Internal Server Error" </h1>
+            <p> {Hey there! Unfortunately we can not serve your desired page at
+            the moment. Something is wrong over on our side. Do not despair,
+            but come back a bit later.} </p>
+            <p> {Vanilla tripped over an internal error. The following should
+            help in debugging:} </p>
+            <pre>
+        ]
+        err
+    ]
 ]
 
 ; -------------------
