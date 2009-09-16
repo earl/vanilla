@@ -30,7 +30,7 @@ append searchpath join vanilla-root %lib/
 append searchpath join vanilla-root %apps/
 
 ;; load vanilla, restore vanilla's script header
-__script: load/header to-file join vanilla-root "vanilla.r"
+__script: load/header find-file %vanilla.r
 system/script/header: first __script
 do next __script
 
