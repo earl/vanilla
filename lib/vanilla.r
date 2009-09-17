@@ -129,7 +129,7 @@ if attempt [benchmark] [benchmark: now/time/precise]
 do load find-file %etc/collect.r
 do load find-file %etc/decode-cgi.r
 do load find-file %etc/string-tools.r
-do load find-file %secure-hash.r
+do load find-file %util/hash.r
 do load find-file %simplemeta.r
 do load find-file %som.r
 
