@@ -121,30 +121,36 @@ REBOL [
 ;
 ; =============================================================================
 
-
 if attempt [benchmark] [benchmark: now/time/precise]
 
-; print "Content-type: text/html^/^/"
-; trace true
-; print system/options/cgi/content-length
+; --- load libraries ---
 
+;; internal libs
+do load find-file %etc/collect.r
+do load find-file %etc/decode-cgi.r
+do load find-file %etc/string-tools.r
+do load find-file %secure-hash.r
+do load find-file %simplemeta.r
+do load find-file %som.r
+
+;; pluggable libs
+do load find-file join to-file space-accessor %.r
+do load find-file join to-file userdb-accessor %.r
+do load find-file join to-file sessiondb-accessor %.r
 
 ; --- cgi stuff ---
-
-; cgi-param fetching is now on the top i.o. to prevent too easy
-; exploits (variable overwriting)
 
 params: copy []
 ; get
 append params decode-cgi any [ system/options/cgi/query-string "" ]
 ; post
-if system/options/cgi/request-method = "POST" [
-    len: load any [ system/options/cgi/content-length "0" ]
-    __post-data: make string! ( len + 10 )
-    while [ 0 < read-io system/ports/input __post-data len ] []
-    if tmp: attempt [ decode-cgi __post-data ]
-        [ append params tmp ]
-    ; append params decode-multipart-form-data/fallback __post-data
+use [ len tmp ] [
+    if system/options/cgi/request-method = "POST" [
+        len: load any [ system/options/cgi/content-length "0" ]
+        __post-data: make string! ( len + 10 )
+        while [ 0 < read-io system/ports/input __post-data len ] []
+        if tmp: attempt [ decode-cgi __post-data ] [ append params tmp ]
+    ]
 ]
 
 ; --- utility functions ---
@@ -200,16 +206,6 @@ set-default: func [
 
 sys-script-name: system/options/script
 script-name: last parse sys-script-name "/"
-
-; load internal libs
-do load find-file %secure-hash.r
-do load find-file %simplemeta.r
-do load find-file %som.r
-
-; load pluggable libs
-do load find-file join to-file space-accessor %.r
-do load find-file join to-file userdb-accessor %.r
-do load find-file join to-file sessiondb-accessor %.r
 
 ; set default config vals
 set-default 'vanilla-space-identifier copy "."
@@ -784,11 +780,6 @@ main: does [
     sessions-store vanilla-session-id session
     if (not = user none) [users-store user]
 ]
-
-;; load patches / utilities
-do load find-file %etc/string-tools.r
-do load find-file %etc/decode-cgi.r
-do load find-file %etc/collect.r
 
 if system/options/cgi/request-method [
     main
