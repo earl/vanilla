@@ -1,6 +1,6 @@
 .gitignore
 *.swp
-db/session/*
-#db/user/*
-space/*.metadata
-#space/*.snip
+data/sessions/*
+#data/users/*
+data/space/*.metadata
+#data/space/*.snip
