@@ -10,7 +10,7 @@
 
 make object! [
     doc: "registers a user if user-name doesn't already exist, create start-{user-name}"
-    handle: func [/local res user-id new-user-protosnip] [
+    handle: func [/local user-id new-user-protosnip] [
         if (= users-get-max -1) [space-meta-set "vanilla-options" "space-mode" "closed"]
 
         if error? try [user-name user-email passphrase1 passphrase2 ] [
@@ -21,14 +21,10 @@ make object! [
         if (4 > length? passphrase1) [return "__Error:__ Hey, your passphrase is no good."]
         if (not = passphrase1 passphrase2) [return "<i>Passphrases given do not match!</i>"]
 
-        res: make string! 256
-        append res rejoin [ "__" user-name ", " user-email "__ registered " ]
         either (users-get-max < 0) [
             users-create-master user-name user-email passphrase1
-            append res "(as master user)."
             ] [
             users-create user-name user-email passphrase1
-            append res "(as standard user)."
             ]
 
         ; - 'homesnip'
@@ -46,10 +42,5 @@ make object! [
             "&passphrase=" (url-encode passphrase1)
             "&redirect-to=" redirect-to
             ]
-
-        ;rejoin [
-        ;   res
-        ;   {<br><br>You can now <a href="} vanilla-display-url {vanilla-user-login">login</a>. Enjoy!}
-        ;   ]
         ]
     ]
