@@ -1,17 +1,4 @@
 REBOL []
-; 2002-04-16    earl
-;       * created chainingspace as a fork from simplespace with space-chaining support
-; 2002-04-28    earl
-;       * dyna loader err msg bugfix (displays full package path)
-; 2002-06-09    earl
-;       * escaping modifications
-; 2002-07-31    earl
-;       * case handling bug fixed (unique/case in sys-dir)
-; 2003-03-14    earl
-;       * added system-snip? which returns true for sysdata-*/appdata-* and friends
-;       * refactored space-dir to use system-snip?
-; 2003-07-27    earl
-;       * mods related to usage of string-tools lib
 
 ; required imports: space-params, app-dir
 
