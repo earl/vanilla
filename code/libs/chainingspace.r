@@ -24,18 +24,18 @@ simplespace-info: "chaining file-based vanillaspace access module; 0.5.2 2002-04
 
 opt-in: charset " *-.1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 
-url-encode: make function! [ str[string!] /re ] [
-   if re [ insert  opt-in  "%:/&=" ]
-   rslt: make string! ( (length? str ) * 3 )
+url-encode: func [str [string!] /re] [
+    if re [insert opt-in "%:/&="]
+    rslt: make string! (length? str) * 3
 
-   foreach  chr str [
-      either ( find  opt-in chr  )
-        [append rslt to-string (either(chr == #" ")["+"][chr])  ]
-        [append rslt
-            join "%" [back back tail(to-string(to-hex(to-integer chr)))]
+    foreach chr str [
+        either find opt-in chr [
+            append rslt to-string either (chr == #" ") ["+"] [chr]
+        ] [
+            append rslt join "%" [back back tail to-string to-hex to-integer chr]
         ]
-   ]
-   rslt
+    ]
+    rslt
 ]
 
 deplus: func [str] [
@@ -45,12 +45,12 @@ deplus: func [str] [
 
 ; --- space-interface follows ...
 
-space-info: func [] [ simplespace-info ]
+space-info: func [] [simplespace-info]
 
-space-locate-snip: func [ name /local snip-path chained-space ] [
+space-locate-snip: func [name /local snip-path chained-space] [
     foreach chained-space space-params [
-        snip-path: to-file rejoin [ chained-space url-encode name ".snip" ]
-        if exists? snip-path [ return snip-path ]
+        snip-path: to-file rejoin [chained-space url-encode name ".snip" ]
+        if exists? snip-path [return snip-path]
     ]
     none
 ]
@@ -70,31 +70,31 @@ expand: func [data what /local with-that cache-age cache-quiescence dynasnip-nam
                 cache-age: (((1 + (now/date - cached-at/date)) * now/time) - cached-at/time)
                 either (cache-age < cache-quiescence) [
                     with-that: space-get rejoin ["cached-" cache-quiescence "-" dynasnip-name]
-                    ] [
+                ] [
                     with-that: space-dyna-exec dynasnip-name
                     space-store rejoin ["cached-" cache-quiescence "-" dynasnip-name] with-that
                     space-meta-set rejoin ["cached-" cache-quiescence "-" dynasnip-name] "cached-at" now
-                    ]
-                ] [
+                ]
+            ] [
                 with-that: space-dyna-exec dynasnip-name
                 space-store rejoin ["cached-" cache-quiescence "-" dynasnip-name] with-that
                 space-meta-set rejoin ["cached-" cache-quiescence "-" dynasnip-name] "cached-at" now
-                ]
-            ] [
-            with-that: space-dyna-exec next what
             ]
         ] [
+            with-that: space-dyna-exec next what
+        ]
+    ] [
         either error? try [pick (find internal-snips what) 2] [
             with-that: space-get what
-            ] [
+        ] [
             with-that: select internal-snips what
             if (type? with-that) = word! [
                 with-that: get with-that
-                ]
             ]
         ]
-    replace data rejoin ["{" what "}"] with-that
     ]
+    replace data rejoin ["{" what "}"] with-that
+]
 
 space-expand: func [data] [
     x-rule: [thru "{" copy to-be-xed to "}"]
@@ -106,22 +106,22 @@ space-expand: func [data] [
             [data: expand esc-to-meta data to-be-xed]
         ;print to-be-xed
         to-be-xed: none
-        ]
     ]
+]
 
 space-get: func [name /local loc] [
     either none? loc: space-locate-snip name
-        [ rejoin ["[describe " name " here]"] ]
-        [ read to-file loc ]
+        [rejoin ["[describe " name " here]"] ]
+        [read to-file loc]
 ]
 
 space-store: func [name data] [
-    if = name "" [ return ]
-    write to-file rejoin [ (first space-params) (url-encode name) ".snip" ] data
-    ]
+    if = name "" [return]
+    write to-file rejoin [(first space-params) (url-encode name) ".snip" ] data
+]
 
-space-delete: func [ name /local fname ] [
-    if = name "" [ return false ]
+space-delete: func [name /local fname] [
+    if = name "" [return false]
 
     fname: to-file join (first space-params) (url-encode name)
     if not any [
@@ -131,8 +131,8 @@ space-delete: func [ name /local fname ] [
         return false
     ]
 
-    if exists? join fname ".snip" [ delete join fname ".snip" ]
-    if exists? join fname ".metadata" [ delete join fname ".metadata" ]
+    if exists? join fname ".snip" [delete join fname ".snip" ]
+    if exists? join fname ".metadata" [delete join fname ".metadata" ]
 
     true
 ]
@@ -140,7 +140,7 @@ space-delete: func [ name /local fname ] [
 space-sys-dir: func [/local files snips chained-space] [
     files: copy []
     snips: copy []
-    foreach chained-space space-params [ append files read to-file chained-space ]
+    foreach chained-space space-params [append files read to-file chained-space]
     foreach file unique/case files [
         if = (skip to-string file (length? to-string file) - 5) ".snip" [
             append snips dehex deplus copy/part to-string file (length? to-string file) - 5
@@ -159,14 +159,14 @@ space-dir: func [/local snips] [
     snips
 ]
 
-system-snip?: func [ snip ] [
+system-snip?: func [snip] [
     not none? any [
-    begins-with? snip "sys-"
-    begins-with? snip "sysdata-"
-    begins-with? snip "new-"
-    begins-with? snip "app-"
-    begins-with? snip "appdata-"
-    begins-with? snip "cached-"
+        begins-with? snip "sys-"
+        begins-with? snip "sysdata-"
+        begins-with? snip "new-"
+        begins-with? snip "app-"
+        begins-with? snip "appdata-"
+        begins-with? snip "cached-"
     ]
 ]
 
@@ -175,15 +175,15 @@ space-dyna-exec: func [call /local name params path dyna err] [
     ; @@ sanitize so that this cannot escape below vanilla-root
     path: join to-file replace/all copy name "." "/" %.r
 
-    if error? try [ dyna: do load find-file path ] [
+    if error? try [dyna: do load find-file path] [
         return rejoin ["__[error loading dynasnip__ from " path "__]__"]
-        ]
+    ]
 
     if error? err: try [return dyna/handle params] [
         print ["-- Dynasnip:" name]
         err
-        ]
     ]
+]
 
 space-meta-get-all: func [snipname] [
     either error? try [
@@ -200,7 +200,7 @@ space-meta-get: func [snipname name] [
     if = allmd none [return none]
     foreach [key value] allmd [if (to-string key) = name [return value]]
     return none
-    ]
+]
 
 space-meta-set: func [snipname name value] [
     metadata-filename: to-file rejoin [(first space-params) url-encode snipname ".metadata"]
@@ -211,9 +211,9 @@ space-meta-set: func [snipname name value] [
     insert/only allmd value
     insert allmd name
     save metadata-filename allmd
-    ]
+]
 
 space-meta-reset: func [snipname] [
     metadata-filename: to-file rejoin [(first space-params) url-encode snipname ".metadata"]
     save metadata-filename []
-    ]
+]
