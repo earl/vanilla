@@ -15,10 +15,6 @@ REBOL []
 
 ; required imports: space-params, app-dir
 
-; --- simplespace-specific functions & variables
-
-simplespace-info: "chaining file-based vanillaspace access module; 0.5.2 2002-04-16"
-
 ; --- utility functions
 ; url-encode by tomc@cs.uoregon.edu, merci
 
@@ -44,8 +40,6 @@ deplus: func [str] [
 ]
 
 ; --- space-interface follows ...
-
-space-info: func [] [simplespace-info]
 
 space-locate-snip: func [name /local snip-path chained-space] [
     foreach chained-space space-params [
@@ -161,10 +155,7 @@ space-dir: func [/local snips] [
 
 system-snip?: func [snip] [
     not none? any [
-        begins-with? snip "sys-"
         begins-with? snip "sysdata-"
-        begins-with? snip "new-"
-        begins-with? snip "app-"
         begins-with? snip "appdata-"
         begins-with? snip "cached-"
     ]
