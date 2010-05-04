@@ -189,7 +189,7 @@ space-meta-set: func [snipname name value] [
     allmd: head allmd
     insert/only allmd value
     insert allmd name
-    save metadata-filename allmd
+    save/all metadata-filename allmd
 ]
 
 space-meta-reset: func [snipname] [
