@@ -3,22 +3,23 @@ REBOL []
 ; required imports: space-params, app-dir
 
 ; --- utility functions
-; url-encode by tomc@cs.uoregon.edu, merci
 
-opt-in: charset " *-.1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
-
-url-encode: func [str [string!] /re] [
-    if re [insert opt-in "%:/&="]
-    rslt: make string! (length? str) * 3
-
+url-encode: func [str [string!] /local valid-chars res] [
+    valid-chars: charset ["*-._" #"a" - #"z" #"A" - #"Z" #"0" - #"9"]
+    res: make string! 3 * length? str
     foreach chr str [
-        either find opt-in chr [
-            append rslt to-string either (chr == #" ") ["+"] [chr]
+        either find valid-chars chr [
+            append res chr
         ] [
-            append rslt join "%" [back back tail to-string to-hex to-integer chr]
+            either #" " = chr [
+                append res "+"
+            ] [
+                append res "%"
+                append res enbase/base to-string chr 16
+            ]
         ]
     ]
-    rslt
+    res
 ]
 
 deplus: func [str] [
